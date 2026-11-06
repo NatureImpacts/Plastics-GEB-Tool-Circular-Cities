@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Marine plastic baseline calculator for cities in the GEF Circular Cities Intercity Network. Trace plastic waste from generation to the ocean and estimate what planned action could prevent.">
+<meta name="description" content="Marine plastic baseline calculator for cities in the GEF Circular Cities Intercity Network. Enter your city's waste and leakage figures to see its marine plastic baseline.">
 <style>
 :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html,body{margin:0}
@@ -71,13 +71,13 @@ h1,h2,h3,h4{font-family:var(--ff-display);margin:0;text-wrap:balance;letter-spac
 .mast .tgt span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.26);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:500}
 
 /* grid */
-.cols{display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:22px;align-items:start;padding-block:24px 40px}
-@media (max-width:1180px){.cols{grid-template-columns:minmax(0,1fr)}}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);gap:22px;align-items:start;padding-block:24px 40px}
+@media (max-width:1080px){.cols{grid-template-columns:minmax(0,1fr)}}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
 .card>.pad{padding:18px}
-.rail{display:flex;flex-direction:column;gap:16px;position:sticky;top:12px}
-@media (max-width:1180px){.rail{position:static}}
-.right{display:flex;flex-direction:column;gap:22px;min-width:0}
+.rail{display:flex;flex-direction:column;gap:16px;min-width:0}
+.right{display:flex;flex-direction:column;gap:16px;min-width:0;position:sticky;top:12px}
+@media (max-width:1080px){.right{position:static;order:-1}}
 
 /* section heads */
 .shead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
@@ -118,6 +118,8 @@ select{appearance:none;cursor:pointer}
 .f.derived label{font-size:12.5px;font-weight:500;color:var(--ink-2)}
 .f.derived .v{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-size:16px;font-weight:600}
 .pre{display:inline-block;font-family:var(--ff-mono);font-size:10.5px;font-weight:600;color:var(--chip-update);background:var(--fill-update);border:1px solid var(--edge-update);border-radius:4px;padding:0 5px;margin-left:6px;letter-spacing:.03em;vertical-align:1px}
+.src{display:inline-block;font-family:var(--ff-mono);font-size:10.5px;font-weight:600;color:var(--marine);background:var(--surface-3);border:1px solid var(--line-2);border-radius:4px;padding:0 5px;margin-left:6px;letter-spacing:.03em;vertical-align:1px}
+.fixednote{font-size:12.5px;color:var(--ink-2);line-height:1.45}
 .btn{font-family:var(--ff-body);font-size:12.5px;font-weight:600;border-radius:7px;padding:7px 11px;cursor:pointer;border:1px solid var(--line-2);background:var(--surface-2);color:var(--ink);transition:background .12s}
 .btn:hover{background:var(--surface-3)}
 .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
@@ -130,8 +132,8 @@ select{appearance:none;cursor:pointer}
 .proxy b{color:var(--ink);font-family:var(--ff-mono);font-weight:600}
 
 /* results */
-.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border-radius:var(--r);overflow:hidden}
-@media (max-width:620px){.tiles{grid-template-columns:minmax(0,1fr)}}
+.tiles{display:grid;grid-template-columns:minmax(0,1fr);gap:1px;background:var(--line);border-radius:var(--r);overflow:hidden}
+@media (min-width:1081px){.tiles{grid-template-columns:minmax(0,1fr)}}
 .tile{background:var(--surface);padding:17px 18px;display:flex;flex-direction:column;gap:3px;min-width:0}
 .tile .k{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)}
 .tile .v{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-size:clamp(25px,4.6vw,34px);font-weight:600;line-height:1.1;letter-spacing:-.02em}
@@ -149,43 +151,6 @@ select{appearance:none;cursor:pointer}
 .todo .mk{font-family:var(--ff-mono);font-weight:600;color:var(--warn);font-size:13px;flex:none}
 .todo div{font-size:13.5px;color:var(--ink)}
 .todo b{color:var(--warn)}
-
-/* diagram */
-.diagwrap{overflow-x:auto;padding:4px 0 2px}
-svg.sankey{display:block;min-width:700px;width:100%;height:auto}
-svg.sankey text{font-family:var(--ff-body)}
-svg.sankey .nlab{font-size:12.5px;font-weight:600;fill:var(--ink)}
-svg.sankey .nval{font-family:var(--ff-mono);font-size:12px;font-weight:600;fill:var(--ink)}
-svg.sankey .nsub{font-size:11px;font-weight:500;fill:var(--ink-2)}
-svg.sankey .colhd{font-family:var(--ff-display);font-size:11.5px;font-weight:600;fill:var(--ink-2);letter-spacing:.07em;text-transform:uppercase}
-.legend{display:flex;flex-wrap:wrap;gap:7px 16px;margin-top:12px}
-.legend span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--ink)}
-.legend i{width:13px;height:13px;border-radius:3px;flex:none}
-.scalenote{font-size:12.5px;color:var(--ink-2);margin-top:9px;max-width:72ch}
-
-/* table */
-table{width:100%;border-collapse:collapse;font-size:13.5px}
-.tblwrap{overflow-x:auto}
-th,td{text-align:right;padding:9px 11px;border-bottom:1px solid var(--line)}
-th:first-child,td:first-child{text-align:left}
-thead th{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);border-bottom:1px solid var(--line-2);white-space:nowrap}
-td.n{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
-tr.tot td{border-bottom:0;border-top:2px solid var(--line-2);font-weight:600;background:var(--surface-2)}
-td .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;vertical-align:0}
-
-/* interventions */
-.lev{display:flex;flex-direction:column;gap:6px;padding:13px 0;border-bottom:1px solid var(--line)}
-.lev:last-of-type{border-bottom:0}
-.lev .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-.lev .nm{font-size:13.5px;font-weight:600}
-.lev .pc{font-family:var(--ff-mono);font-size:14px;font-weight:600;color:var(--brand)}
-.lev .ds{font-size:12.5px;color:var(--ink-2)}
-input[type=range]{width:100%;accent-color:var(--brand);height:22px;margin:0}
-.scen{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:14px}
-@media (max-width:480px){.scen{grid-template-columns:minmax(0,1fr)}}
-.scen div{background:var(--surface-2);padding:13px 15px}
-.scen .k{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)}
-.scen .v{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-size:22px;font-weight:600;line-height:1.2}
 
 /* export */
 textarea{width:100%;min-height:150px;font-family:var(--ff-mono);font-size:12px;line-height:1.6;color:var(--ink);background:var(--surface-2);border:1px solid var(--line-2);border-radius:8px;padding:11px;resize:vertical}
@@ -235,13 +200,8 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
           <label for="city">City</label>
           <div class="inrow"><select id="city"></select></div>
         </div>
-        <div class="f derived" id="d-pop"><label>Population</label><span class="v num" id="o-pop">&mdash;</span></div>
-        <div class="f derived" id="d-msw"><label>Total municipal solid waste</label><span class="v num" id="o-msw">&mdash;</span></div>
-        <div class="f" id="f-mswin" hidden>
-          <label for="msw">Total municipal solid waste</label>
-          <div class="inrow update"><input id="msw" type="number" min="0" step="any" inputmode="decimal"><span class="unit">t / year</span></div>
-        </div>
-        <div class="f" id="f-popin" hidden>
+        <div class="f derived span2" id="d-pop"><label>Population</label><span class="v num" id="o-pop">&mdash;</span></div>
+        <div class="f span2" id="f-popin" hidden>
           <label for="pop">Population</label>
           <div class="inrow update"><input id="pop" type="number" min="0" step="any" inputmode="decimal"><span class="unit">people</span></div>
         </div>
@@ -250,9 +210,15 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
 
     <section class="card"><div class="pad">
       <div class="shead"><span class="step">B</span><h2>Waste and collection</h2><span class="chip u"><i class="dot"></i>Update</span></div>
-      <p class="lede">Both values are prefilled from the project dataset. Replace them with your own
+      <p class="lede">All three are prefilled from the project dataset. Replace them with your own
          figures where you have them.</p>
       <div class="fgroup">
+        <div class="f span2">
+          <label for="msw">Total municipal solid waste<span class="pre">PREFILLED</span></label>
+          <div class="inrow update"><input id="msw" type="number" min="0" step="any" inputmode="decimal"><span class="unit">t / year</span></div>
+          <span class="hint">All municipal solid waste generated in the city each year, across every
+            material, not only plastic.</span>
+        </div>
         <div class="f">
           <label for="plastic">Annual plastic waste generated<span class="pre">PREFILLED</span></label>
           <div class="inrow update"><input id="plastic" type="number" min="0" step="any" inputmode="decimal"><span class="unit">t / year</span></div>
@@ -320,17 +286,33 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
     <section class="card"><div class="pad">
       <div class="shead"><span class="step">E</span><h2>Project horizon</h2></div>
       <div class="fgroup">
-        <div class="f">
-          <label for="growth">Annual growth rate<span class="pre">PREFILLED</span></label>
+        <div class="f derived" id="d-growth">
+          <label>Annual population growth<span class="src">WORLD BANK</span></label>
+          <span class="v num" id="o-growth">&mdash;</span>
+        </div>
+        <div class="f" id="f-growthin" hidden>
+          <label for="growth">Annual population growth</label>
           <div class="inrow update"><input id="growth" type="number" step="any" inputmode="decimal"><span class="unit">% / year</span></div>
-          <span class="hint">Population growth, used to compound the baseline across the project.</span>
         </div>
         <div class="f">
           <label for="years">Project duration</label>
           <div class="inrow"><input id="years" type="number" min="1" max="30" step="1" inputmode="numeric"><span class="unit">years</span></div>
         </div>
+        <p class="fixednote span2" id="growthnote">Fixed for the listed cities, taken from World Bank
+          population growth data, and used to compound the baseline across the project. Choose
+          <em>Other city</em> if you need to enter a different rate.</p>
       </div>
       <div class="btnrow" style="margin-top:15px"><button class="btn" id="reset">Reset to dataset values</button></div>
+    </div></section>
+
+    <section class="card"><div class="pad">
+      <div class="shead"><h2>Send your figures back</h2></div>
+      <p class="lede">Copy this block into your reply so the network can compile the baselines.</p>
+      <textarea id="out" readonly aria-label="Results summary to copy"></textarea>
+      <div class="btnrow" style="margin-top:11px">
+        <button class="btn primary" id="copy">Copy summary</button>
+        <span class="ok" id="copied" hidden>Copied</span>
+      </div>
     </div></section>
 
   </div>
@@ -360,63 +342,6 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
       </div>
     </section>
 
-    <section class="card"><div class="pad">
-      <div class="shead"><h3>Tracking plastic flows in your city</h3></div>
-      <div class="diagwrap"><svg class="sankey" id="sankey" viewBox="0 0 980 440" role="img"
-        aria-labelledby="sk-title" preserveAspectRatio="xMidYMid meet"><title id="sk-title">Waste flow from total plastic generated to marine plastics</title></svg></div>
-      <div class="legend">
-        <span><i style="background:var(--managed)"></i>Retained in the system</span>
-        <span><i style="background:var(--uncoll)"></i>Escapes to the environment</span>
-        <span><i style="background:var(--land)"></i>Stays on land</span>
-        <span><i style="background:var(--marine)"></i>Reaches the ocean</span>
-      </div>
-      <p class="scalenote">Ribbon width is proportional to tonnage, with a minimum width so that small
-        flows stay visible. Read the figure on each node for the exact value.</p>
-    </div></section>
-
-    <section class="card"><div class="pad">
-      <div class="shead"><h3>Contribution by stream</h3></div>
-      <div class="tblwrap"><table>
-        <thead><tr><th>Stream</th><th>Plastic</th><th>Escapes</th><th>To ocean</th><th>Marine plastic</th><th>Share</th></tr></thead>
-        <tbody id="tbody"></tbody>
-      </table></div>
-    </div></section>
-
-    <section class="card"><div class="pad">
-      <div class="shead"><h3>What your action could prevent</h3></div>
-      <p class="lede">Three ways an intervention changes the baseline. Move a lever to see the effect.
-         Indicative only, for structuring the discussion.</p>
-      <div class="lev">
-        <div class="top"><span class="nm">1. Source reduction</span><span class="pc" id="v-l1">0%</span></div>
-        <span class="ds">Less plastic generated: reuse, refill, bans on single-use items, procurement.</span>
-        <input type="range" id="l1" min="0" max="50" value="0" step="1" aria-label="Source reduction percent">
-      </div>
-      <div class="lev">
-        <div class="top"><span class="nm">2. Flow shift</span><span class="pc" id="v-l2">0%</span></div>
-        <span class="ds">More waste collected: extended coverage, new collection points, informal sector integration.</span>
-        <input type="range" id="l2" min="0" max="100" value="0" step="1" aria-label="Collection gap closed percent">
-      </div>
-      <div class="lev">
-        <div class="top"><span class="nm">3. Improved management</span><span class="pc" id="v-l3">0%</span></div>
-        <span class="ds">Fewer losses per tonne handled: covered vehicles, containment, landfill works, clean-ups.</span>
-        <input type="range" id="l3" min="0" max="80" value="0" step="1" aria-label="Leakage reduction percent">
-      </div>
-      <div class="scen">
-        <div><span class="k">Annual marine plastic prevented</span><span class="v" id="s-annual">0.0 t</span></div>
-        <div><span class="k">Prevented over the project</span><span class="v" id="s-cum">0.0 t</span></div>
-      </div>
-    </div></section>
-
-    <section class="card"><div class="pad">
-      <div class="shead"><h3>Send your figures back</h3></div>
-      <p class="lede">Copy this block into your reply so the network can compile the baselines.</p>
-      <textarea id="out" readonly aria-label="Results summary to copy"></textarea>
-      <div class="btnrow" style="margin-top:11px">
-        <button class="btn primary" id="copy">Copy summary</button>
-        <span class="ok" id="copied" hidden>Copied</span>
-      </div>
-    </div></section>
-
   </div>
 </div>
 </div>
@@ -426,9 +351,10 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
      workshop workbook. The baseline is what your city emits to the ocean if nothing changes. The
      global environmental benefit is the reduction you achieve against it, which is what the lever
      panel estimates.</p>
-  <p><b>Where the prefilled numbers come from.</b> Population, total waste, plastic waste, collection
-     coverage and growth rates are from the project dataset for the participating cities. The two
-     leakage percentages are deliberately left empty: no dataset can set them for your city.</p>
+  <p><b>Where the prefilled numbers come from.</b> Population, total waste, plastic waste and
+     collection coverage are from the project dataset for the participating cities. Annual population
+     growth is fixed, taken from World Bank data. The two leakage percentages are deliberately left
+     empty: no dataset can set them for your city.</p>
   <details class="meth"><summary>Calculation steps</summary>
     <ol>
       <li>Collected plastic <code>= plastic &times; collection rate</code>; uncollected is the remainder.</li>
@@ -479,11 +405,10 @@ function num(id){ var v = parseFloat($(id).value); return isFinite(v) ? v : NaN;
 function current(){ var v = $("city").value; return v === OTHER ? null : CITIES[+v]; }
 
 function load(){
-  var c = current(), other = !c;
-  $("f-mswin").hidden = !other; $("f-popin").hidden = !other;
+  var c = current();
   if(c){
-    $("pop").value = Math.round(c.pop); $("msw").value = c.msw.toFixed(1);
-    $("plastic").value = c.pl.toFixed(1);
+    $("pop").value = Math.round(c.pop); $("msw").value = +c.msw.toFixed(1);
+    $("plastic").value = +c.pl.toFixed(1);
     $("coll").value = +(c.cr*100).toFixed(4);
     $("growth").value = +(c.g*100).toFixed(4);
   } else {
@@ -531,120 +456,15 @@ function model(over){
     landU:escU - marU, landC:escC - marC};
 }
 
-/* ---------- Sankey ---------- */
-var COLS = ["Plastic generated","Collection split","Fate of each stream","Where it ends up"];
-function sankey(m){
-  var svg = $("sankey"), H = 440, TOP = 46, BOT = 20;
-  var NW = 13, PAD = 16, MINH = 3, MINL = 2.2;
-  var x = [112, 330, 560, 820];
-  var avail = H - TOP - BOT, total = m.plastic;
-  var sc = function(v){ return total > 0 ? Math.max(MINH, v/total*(avail - 3*PAD)) : 0; };
-  var lw = function(v){ return total > 0 ? Math.max(MINL, v/total*(avail - 3*PAD)) : 0; };
-
-  function stack(items, gap){
-    var h = items.reduce(function(a,b){ return a + sc(b.v); }, 0) + gap*(items.length-1);
-    var y = TOP + Math.max(0,(avail - h))/2;
-    return items.map(function(it){ var o = {y:y, h:sc(it.v), v:it.v, l:it.l, s:it.s, c:it.c}; y += o.h + gap; return o; });
-  }
-  var c0 = stack([{v:total, l:"Total plastic", c:"var(--ink-3)"}], 0);
-  var c1 = stack([
-    {v:m.collected,   l:"Collected",   s:pct(m.cr,1)+" of total",      c:"var(--managed)"},
-    {v:m.uncollected, l:"Uncollected", s:pct(1-m.cr,1)+" of total",    c:"var(--uncoll)"}
-  ], PAD);
-  var c2 = stack([
-    {v:m.retC,  l:"Recycled or landfilled", c:"var(--managed)"},
-    {v:m.escC,  l:"Lost in collection",     c:"var(--uncoll)"},
-    {v:m.escU,  l:"Dumped or discarded",    c:"var(--uncoll)"},
-    {v:m.retU,  l:"Burned or contained",    c:"var(--land)"}
-  ], PAD*0.62);
-  var c3 = stack([
-    {v:m.retC + m.retU,  l:"Stays in system", c:"var(--managed)"},
-    {v:m.landC + m.landU,l:"Stays on land",   c:"var(--land)"},
-    {v:m.annual,         l:"Marine plastics", s:"reaches the ocean", c:"var(--marine)"}
-  ], PAD);
-
-  function ribbon(a, ay, b, by, v, fill, op){
-    var h1 = lw(v), h2 = lw(v);
-    var x1 = a + NW, x2 = b, mx = (x1 + x2)/2;
-    return '<path d="M'+x1+','+ay+' C'+mx+','+ay+' '+mx+','+by+' '+x2+','+by
-      +' L'+x2+','+(by+h2)+' C'+mx+','+(by+h2)+' '+mx+','+(ay+h1)+' '+x1+','+(ay+h1)+' Z"'
-      +' fill="'+fill+'" opacity="'+op+'"/>';
-  }
-  var oC = {}, oT = {}, g = "";
-  function flow(si, sCol, ti, tCol, v, fill){
-    if(!(v > 0)) return;
-    var s = sCol[si], tg = tCol[ti];
-    var ay = s.y + (oC[si+"-"+sCol.length] = (oC[si+"-"+sCol.length] || 0)) ;
-    var by = tg.y + (oT[ti+"-"+tCol.length] = (oT[ti+"-"+tCol.length] || 0));
-    g += ribbon(x[sCol===c0?0:sCol===c1?1:2], ay, x[tCol===c1?1:tCol===c2?2:3], by, v, fill, .42);
-    oC[si+"-"+sCol.length] += lw(v); oT[ti+"-"+tCol.length] += lw(v);
-  }
-  flow(0,c0,0,c1,m.collected,"var(--managed)");
-  flow(0,c0,1,c1,m.uncollected,"var(--uncoll)");
-  oC = {}; oT = {};
-  flow(0,c1,0,c2,m.retC,"var(--managed)");
-  flow(0,c1,1,c2,m.escC,"var(--uncoll)");
-  flow(1,c1,2,c2,m.escU,"var(--uncoll)");
-  flow(1,c1,3,c2,m.retU,"var(--land)");
-  oC = {}; oT = {};
-  flow(0,c2,0,c3,m.retC,"var(--managed)");
-  flow(1,c2,2,c3,m.marC,"var(--marine)");
-  flow(1,c2,1,c3,m.landC,"var(--land)");
-  flow(2,c2,2,c3,m.marU,"var(--marine)");
-  flow(2,c2,1,c3,m.landU,"var(--land)");
-  flow(3,c2,0,c3,m.retU,"var(--managed)");
-
-  /* labels sit at their node's centre, then get pushed apart so none overlap */
-  function place(col){
-    var lines = col.map(function(n){ return n.s ? 3 : 2; });
-    var pitch = Math.max.apply(null, lines) * 15 + 7;
-    var ly = col.map(function(n){ return n.y + n.h/2; });
-    for(var i = 1; i < ly.length; i++) ly[i] = Math.max(ly[i], ly[i-1] + pitch);
-    var last = ly.length - 1, limit = H - BOT - (lines[last]-1)*7.5;
-    if(ly[last] > limit){
-      ly[last] = limit;
-      for(var j = last-1; j >= 0; j--) ly[j] = Math.min(ly[j], ly[j+1] - pitch);
-    }
-    var top = TOP + (lines[0]-1)*7.5;
-    if(ly[0] < top){ ly[0] = top; for(var k = 1; k < ly.length; k++) ly[k] = Math.max(ly[k], ly[k-1] + pitch); }
-    return ly;
-  }
-  function nodes(col, ci){
-    var left = ci === 0, s = "", ly = place(col);
-    col.forEach(function(n, i){
-      s += '<rect x="'+x[ci]+'" y="'+n.y+'" width="'+NW+'" height="'+n.h+'" rx="3" fill="'+n.c+'"/>';
-      var tx = left ? x[ci] - 11 : x[ci] + NW + 11, anc = left ? "end" : "start";
-      var cy = n.y + n.h/2, lab = ly[i];
-      /* leader line where the label had to move off its node */
-      if(Math.abs(lab - cy) > 2){
-        var hx = left ? x[ci] - 5 : x[ci] + NW + 5;
-        s += '<path d="M'+(left?x[ci]:x[ci]+NW)+','+cy+' L'+hx+','+lab+'" stroke="var(--line-2)" stroke-width="1" fill="none"/>';
-      }
-      var lines = [{t:n.l, c:"nlab"}, {t:t(n.v)+" t", c:"nval"}];
-      if(n.s) lines.push({t:n.s, c:"nsub"});
-      var y0 = lab - (lines.length-1)*7.5;
-      lines.forEach(function(L,j){
-        s += '<text class="'+L.c+'" x="'+tx+'" y="'+(y0 + j*15)+'" text-anchor="'+anc+'" dominant-baseline="middle">'+L.t+'</text>';
-      });
-    });
-    return s;
-  }
-  var hd = "";
-  [c0,c1,c2,c3].forEach(function(col,ci){
-    hd += '<text class="colhd" x="'+(ci===0 ? 0 : x[ci])+'" y="21" text-anchor="start">'+COLS[ci]+'</text>';
-  });
-  svg.innerHTML = '<title id="sk-title">Waste flow from total plastic generated to marine plastics</title>'
-    + hd + g + nodes(c0,0) + nodes(c1,1) + nodes(c2,2) + nodes(c3,3);
-}
-
 /* ---------- render ---------- */
 function render(){
   var c = current(), m = model();
   $("o-pop").textContent  = c ? t(c.pop,0) : "—";
-  $("o-msw").textContent  = isFinite(m.msw) ? t(m.msw,0) + " t / year" : "—";
   $("o-share").textContent = isFinite(m.share) ? pct(m.share,1) + " of total waste" : "—";
-  $("f-popin").hidden = !!c; $("f-mswin").hidden = !!c;
-  $("d-pop").hidden = !c; $("d-msw").hidden = !c;
+  $("o-growth").textContent = isFinite(m.g) ? pct(m.g,2) + " / year" : "—";
+  $("f-popin").hidden = !!c;     $("d-pop").hidden = !c;
+  $("f-growthin").hidden = !!c;  $("d-growth").hidden = !c;
+  $("growthnote").hidden = !c;
 
   var missing = [];
   if(!isFinite(m.eu)) missing.push("emissions from uncollected waste");
@@ -669,42 +489,7 @@ function render(){
   $("r-cum").textContent    = ready ? t(m.cum) : "—";
   $("r-cum-sub").textContent = "tonnes over " + m.yrs + " years at " + pct(m.g,2) + " growth";
 
-  sankey(ready ? m : Object.assign({}, m, {eu:0,ec:0,escU:0,escC:0,marU:0,marC:0,annual:0,
-    retC:m.collected, retU:m.uncollected, landU:0, landC:0}));
-
-  var rows = [
-    {k:"Uncollected", c:"var(--uncoll)", p:m.uncollected, e:m.escU, r:m.mu, v:m.marU},
-    {k:"Collected",   c:"var(--managed)", p:m.collected,  e:m.escC, r:m.mc, v:m.marC}
-  ];
-  $("tbody").innerHTML = rows.map(function(r){
-    return '<tr><td><span class="sw" style="background:'+r.c+'"></span>'+r.k+'</td>'
-      + '<td class="n">'+t(r.p)+' t</td><td class="n">'+(isFinite(r.e)?t(r.e)+" t":"—")+'</td>'
-      + '<td class="n">'+pct(r.r,0)+'</td><td class="n">'+(isFinite(r.v)?t(r.v)+" t":"—")+'</td>'
-      + '<td class="n">'+(ready && m.annual>0 ? pct(r.v/m.annual,0) : "—")+'</td></tr>';
-  }).join("")
-   + '<tr class="tot"><td>Marine plastic, annual</td><td class="n">'+t(m.plastic)+' t</td>'
-   + '<td class="n">'+(ready?t(m.escU+m.escC)+" t":"—")+'</td><td class="n"></td>'
-   + '<td class="n">'+(ready?t(m.annual)+" t":"—")+'</td><td class="n">'+(ready?"100%":"—")+'</td></tr>';
-
-  scenario(m, ready);
   $("out").value = summary(c, m, ready);
-}
-
-/* ---------- intervention levers ---------- */
-function scenario(base, ready){
-  var l1 = +$("l1").value, l2 = +$("l2").value, l3 = +$("l3").value;
-  $("v-l1").textContent = l1 + "%"; $("v-l2").textContent = l2 + "%"; $("v-l3").textContent = l3 + "%";
-  if(!ready){ $("s-annual").textContent = "—"; $("s-cum").textContent = "—"; return; }
-  var gap = 1 - base.cr;
-  var m2 = model({
-    plastic: base.plastic * (1 - l1/100),
-    cr: (base.cr + gap*(l2/100)) * 100,
-    eu: base.eu * (1 - l3/100) * 100,
-    ec: base.ec * (1 - l3/100) * 100
-  });
-  var dA = base.annual - m2.annual, dC = base.cum - m2.cum;
-  $("s-annual").textContent = t(dA) + " t";
-  $("s-cum").textContent = t(dC) + " t";
 }
 
 /* ---------- export ---------- */
@@ -724,7 +509,8 @@ function summary(c, m, ready){
   L.push("  Emissions from collected waste .... " + pct(m.ec,2) + " of collected");
   L.push("  Marine leakage, uncollected ....... " + pct(m.mu,0));
   L.push("  Marine leakage, collected ......... " + pct(m.mc,1));
-  L.push("  Growth rate / duration ............ " + pct(m.g,2) + " / " + m.yrs + " years");
+  L.push("  Population growth (World Bank) .... " + pct(m.g,2) + " / year");
+  L.push("  Project duration .................. " + m.yrs + " years");
   L.push("");
   L.push("BASELINE");
   L.push("  Collected plastic ................. " + t(m.collected) + " t/year");
@@ -733,16 +519,6 @@ function summary(c, m, ready){
   L.push("  Marine plastic, collected ......... " + t(m.marC) + " t/year");
   L.push("  MARINE PLASTIC, ANNUAL ............ " + t(m.annual) + " t/year");
   L.push("  MARINE PLASTIC, " + m.yrs + "-YEAR TOTAL ...... " + t(m.cum) + " t");
-  var l1 = +$("l1").value, l2 = +$("l2").value, l3 = +$("l3").value;
-  if(l1 || l2 || l3){
-    L.push("");
-    L.push("INTERVENTION SCENARIO (indicative)");
-    L.push("  Source reduction .................. " + l1 + "% less plastic generated");
-    L.push("  Flow shift ........................ " + l2 + "% of the collection gap closed");
-    L.push("  Improved management ............... " + l3 + "% lower leakage per tonne");
-    L.push("  Prevented, annual ................. " + $("s-annual").textContent);
-    L.push("  Prevented over " + m.yrs + " years ........... " + $("s-cum").textContent);
-  }
   return L.join("\n");
 }
 
@@ -758,8 +534,7 @@ function summary(c, m, ready){
     $(id).addEventListener("input", render);
   });
   $("mu").addEventListener("change", render);
-  ["l1","l2","l3"].forEach(function(id){ $(id).addEventListener("input", render); });
-  $("reset").addEventListener("click", function(){ ["l1","l2","l3"].forEach(function(id){ $(id).value = 0; }); load(); });
+  $("reset").addEventListener("click", load);
   ["eu","ec"].forEach(function(k){
     $("p-"+k+"-btn").addEventListener("click", function(){ $(k).value = $("p-"+k).dataset.v; render(); });
   });
