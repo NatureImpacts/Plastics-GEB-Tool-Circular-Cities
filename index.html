@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Marine plastic baseline calculator for cities in the GEF Circular Cities Intercity Network. Trace plastic waste from generation to the ocean and estimate what planned action could prevent.">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{margin:0}
+</style>
+<title>Marine Plastic Baseline</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: instrument panel. Left rail of city inputs, right reading area of results and waste-flow diagram. Stacks to one column on phone. */
+:root{
+  --bg:#f5f8f6; --surface:#ffffff; --surface-2:#eaf0ec; --surface-3:#dfe8e2;
+  --ink:#0d1a13; --ink-2:#44544b; --ink-3:#6b7a71;
+  --line:#d3dcd6; --line-2:#bdc9c2;
+  --brand:#01673d; --brand-2:#00a469;
+  --marine:#2a78d6; --uncoll:#eb6834; --managed:#1baf7a; --land:#8a9790;
+  --fill-update:#fff8e3; --edge-update:#c98b05; --chip-update:#8a5e00;
+  --fill-review:#e6f6ee; --edge-review:#00a469; --chip-review:#01673d;
+  --warn:#b4480f; --warn-bg:#fdeee5;
+  --ff-display:'Archivo','Helvetica Neue',Arial,sans-serif;
+  --ff-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --ff-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --r:10px; --shadow:0 1px 2px rgba(13,26,19,.06),0 6px 20px rgba(13,26,19,.05);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1411; --surface:#161e19; --surface-2:#1d2721; --surface-3:#26322b;
+  --ink:#ecf2ee; --ink-2:#aebab3; --ink-3:#87948c;
+  --line:#2a352e; --line-2:#3a4740;
+  --brand:#00bc7a; --brand-2:#4fd99f;
+  --marine:#3987e5; --uncoll:#d95926; --managed:#199e70; --land:#7c8a83;
+  --fill-update:#2a2310; --edge-update:#e0a202; --chip-update:#f0c250;
+  --fill-review:#0f2a1e; --edge-review:#00bc7a; --chip-review:#4fd99f;
+  --warn:#f0a070; --warn-bg:#2e1a10;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0e1411; --surface:#161e19; --surface-2:#1d2721; --surface-3:#26322b;
+  --ink:#ecf2ee; --ink-2:#aebab3; --ink-3:#87948c;
+  --line:#2a352e; --line-2:#3a4740;
+  --brand:#00bc7a; --brand-2:#4fd99f;
+  --marine:#3987e5; --uncoll:#d95926; --managed:#199e70; --land:#7c8a83;
+  --fill-update:#2a2310; --edge-update:#e0a202; --chip-update:#f0c250;
+  --fill-review:#0f2a1e; --edge-review:#00bc7a; --chip-review:#4fd99f;
+  --warn:#f0a070; --warn-bg:#2e1a10;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff-body);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1440px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+h1,h2,h3,h4{font-family:var(--ff-display);margin:0;text-wrap:balance;letter-spacing:-.015em;line-height:1.18}
+.num{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+/* masthead */
+.mast{background:var(--brand);color:#fff}
+:root[data-theme="dark"] .mast,:root:not([data-theme="light"]) .mast{color:#06120c}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .mast{color:#fff}}
+:root[data-theme="light"] .mast{color:#fff}
+.mast .wrap{padding-block:26px 24px}
+.eyebrow{font-family:var(--ff-body);font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;opacity:.86}
+.mast h1{font-size:clamp(26px,4.6vw,40px);font-weight:700;margin-top:10px;max-width:22ch}
+.mast p{margin:10px 0 0;max-width:62ch;font-size:15px;opacity:.93}
+.mast .tgt{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.mast .tgt span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.26);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:500}
+
+/* grid */
+.cols{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:22px;align-items:start;padding-block:24px 40px}
+@media (max-width:1180px){.cols{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.card>.pad{padding:18px}
+.rail{display:flex;flex-direction:column;gap:16px;position:sticky;top:12px}
+@media (max-width:1180px){.rail{position:static}}
+.right{display:flex;flex-direction:column;gap:22px;min-width:0}
+
+/* section heads */
+.shead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.shead h2{font-size:17px;font-weight:600}
+.shead h3{font-size:15.5px;font-weight:600}
+.step{font-family:var(--ff-mono);font-size:11px;font-weight:600;color:var(--brand);border:1px solid var(--line-2);border-radius:5px;padding:1px 6px;letter-spacing:.04em}
+.lede{color:var(--ink-2);font-size:13.5px;margin:2px 0 14px}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;border-radius:5px;padding:3px 8px;font-family:var(--ff-body)}
+.chip.u{background:var(--fill-update);color:var(--chip-update);border:1px solid var(--edge-update)}
+.chip.r{background:var(--fill-review);color:var(--chip-review);border:1px solid var(--edge-review)}
+.chip .dot{width:7px;height:7px;border-radius:2px}
+.chip.u .dot{background:var(--edge-update)}
+.chip.r .dot{background:var(--edge-review)}
+
+/* fields */
+.fgroup{display:flex;flex-direction:column;gap:14px}
+.f{display:flex;flex-direction:column;gap:5px}
+.f>label{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.35}
+.f .hint{font-size:12.5px;color:var(--ink-2);line-height:1.45}
+.inrow{display:flex;align-items:stretch;border-radius:8px;overflow:hidden;border:1px solid var(--line-2);background:var(--surface)}
+.inrow:focus-within{outline:2px solid var(--brand-2);outline-offset:1px}
+.inrow input,.inrow select{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:500;padding:9px 11px}
+.inrow input:focus,.inrow select:focus{outline:none}
+.inrow .unit{display:flex;align-items:center;padding:0 11px;background:var(--surface-2);border-left:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink-2);white-space:nowrap}
+.inrow.update{background:var(--fill-update);border-color:var(--edge-update);border-left:4px solid var(--edge-update)}
+.inrow.update .unit{background:transparent;border-left-color:var(--edge-update)}
+.inrow.review{background:var(--fill-review);border-color:var(--edge-review);border-left:4px solid var(--edge-review)}
+.inrow.review .unit{background:transparent;border-left-color:var(--edge-review)}
+.inrow.empty{box-shadow:inset 0 0 0 1px var(--edge-update)}
+select{appearance:none;cursor:pointer}
+.f.derived{background:var(--surface-2);border-radius:8px;padding:9px 11px;gap:2px}
+.f.derived label{font-size:12.5px;font-weight:500;color:var(--ink-2)}
+.f.derived .v{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:600}
+.pre{display:inline-block;font-family:var(--ff-mono);font-size:10.5px;font-weight:600;color:var(--chip-update);background:var(--fill-update);border:1px solid var(--edge-update);border-radius:4px;padding:0 5px;margin-left:6px;letter-spacing:.03em;vertical-align:1px}
+.btn{font-family:var(--ff-body);font-size:12.5px;font-weight:600;border-radius:7px;padding:7px 11px;cursor:pointer;border:1px solid var(--line-2);background:var(--surface-2);color:var(--ink);transition:background .12s}
+.btn:hover{background:var(--surface-3)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+:root[data-theme="dark"] .btn.primary,:root:not([data-theme="light"]) .btn.primary{color:#06120c}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn.primary{color:#fff}}
+:root[data-theme="light"] .btn.primary{color:#fff}
+.btn:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.proxy{display:flex;align-items:flex-start;gap:8px;background:var(--surface-2);border-left:3px solid var(--marine);border-radius:0 7px 7px 0;padding:8px 10px;font-size:12.5px;color:var(--ink-2)}
+.proxy b{color:var(--ink);font-family:var(--ff-mono);font-weight:600}
+
+/* results */
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border-radius:var(--r);overflow:hidden}
+@media (max-width:620px){.tiles{grid-template-columns:minmax(0,1fr)}}
+.tile{background:var(--surface);padding:17px 18px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.tile .k{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)}
+.tile .v{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-size:clamp(25px,4.6vw,34px);font-weight:600;line-height:1.1;letter-spacing:-.02em}
+.tile .s{font-size:12.5px;color:var(--ink-2)}
+.tile.hero{background:var(--brand);color:#fff}
+.tile.hero .k,.tile.hero .s{color:rgba(255,255,255,.88)}
+:root[data-theme="dark"] .tile.hero,:root:not([data-theme="light"]) .tile.hero{color:#06120c}
+:root[data-theme="dark"] .tile.hero .k,:root[data-theme="dark"] .tile.hero .s,:root:not([data-theme="light"]) .tile.hero .k,:root:not([data-theme="light"]) .tile.hero .s{color:rgba(6,18,12,.78)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .tile.hero{color:#fff}:root:not([data-theme="dark"]) .tile.hero .k,:root:not([data-theme="dark"]) .tile.hero .s{color:rgba(255,255,255,.88)}}
+:root[data-theme="light"] .tile.hero{color:#fff}
+:root[data-theme="light"] .tile.hero .k,:root[data-theme="light"] .tile.hero .s{color:rgba(255,255,255,.88)}
+
+/* incomplete banner */
+.todo{display:flex;gap:11px;align-items:flex-start;background:var(--warn-bg);border:1px solid var(--warn);border-radius:var(--r);padding:13px 15px}
+.todo .mk{font-family:var(--ff-mono);font-weight:600;color:var(--warn);font-size:13px;flex:none}
+.todo div{font-size:13.5px;color:var(--ink)}
+.todo b{color:var(--warn)}
+
+/* diagram */
+.diagwrap{overflow-x:auto;padding:4px 0 2px}
+svg.sankey{display:block;min-width:740px;width:100%;height:auto}
+svg.sankey text{font-family:var(--ff-body)}
+svg.sankey .nlab{font-size:12.5px;font-weight:600;fill:var(--ink)}
+svg.sankey .nval{font-family:var(--ff-mono);font-size:12px;font-weight:600;fill:var(--ink)}
+svg.sankey .nsub{font-size:11px;font-weight:500;fill:var(--ink-2)}
+svg.sankey .colhd{font-family:var(--ff-display);font-size:11.5px;font-weight:600;fill:var(--ink-2);letter-spacing:.07em;text-transform:uppercase}
+.legend{display:flex;flex-wrap:wrap;gap:7px 16px;margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--ink)}
+.legend i{width:13px;height:13px;border-radius:3px;flex:none}
+.scalenote{font-size:12.5px;color:var(--ink-2);margin-top:9px;max-width:72ch}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+.tblwrap{overflow-x:auto}
+th,td{text-align:right;padding:9px 11px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+thead th{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);border-bottom:1px solid var(--line-2);white-space:nowrap}
+td.n{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+tr.tot td{border-bottom:0;border-top:2px solid var(--line-2);font-weight:600;background:var(--surface-2)}
+td .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;vertical-align:0}
+
+/* interventions */
+.lev{display:flex;flex-direction:column;gap:6px;padding:13px 0;border-bottom:1px solid var(--line)}
+.lev:last-of-type{border-bottom:0}
+.lev .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.lev .nm{font-size:13.5px;font-weight:600}
+.lev .pc{font-family:var(--ff-mono);font-size:14px;font-weight:600;color:var(--brand)}
+.lev .ds{font-size:12.5px;color:var(--ink-2)}
+input[type=range]{width:100%;accent-color:var(--brand);height:22px;margin:0}
+.scen{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:14px}
+@media (max-width:480px){.scen{grid-template-columns:minmax(0,1fr)}}
+.scen div{background:var(--surface-2);padding:13px 15px}
+.scen .k{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)}
+.scen .v{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-size:22px;font-weight:600;line-height:1.2}
+
+/* export */
+textarea{width:100%;min-height:150px;font-family:var(--ff-mono);font-size:12px;line-height:1.6;color:var(--ink);background:var(--surface-2);border:1px solid var(--line-2);border-radius:8px;padding:11px;resize:vertical}
+textarea:focus{outline:2px solid var(--brand-2);outline-offset:1px}
+.ok{font-size:12.5px;font-weight:600;color:var(--brand);align-self:center}
+
+/* footer */
+footer{border-top:1px solid var(--line);background:var(--surface)}
+footer .wrap{padding-block:22px 30px}
+footer p{font-size:12.5px;color:var(--ink-2);margin:0 0 7px;max-width:76ch}
+footer b{color:var(--ink)}
+details.meth{margin-top:10px}
+details.meth summary{font-size:13px;font-weight:600;color:var(--brand);cursor:pointer}
+details.meth ol{font-size:12.5px;color:var(--ink-2);padding-left:20px;margin:9px 0 0}
+details.meth li{margin-bottom:5px}
+details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-2);padding:1px 5px;border-radius:4px;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<header class="mast">
+  <div class="wrap">
+    <div class="eyebrow">GEF Circular Cities &middot; Intercity Network</div>
+    <h1>Marine plastic baseline</h1>
+    <p>Trace your city's plastic waste from generation to the ocean, then see what your planned
+       action could prevent. Six inputs, taken from the workshop baseline tool.</p>
+    <div class="tgt">
+      <span>Project target 5,065 t</span>
+      <span>Attributed to the network 2,800 t</span>
+      <span>Core Indicator 5.3</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="cols">
+
+  <!-- ============ LEFT RAIL: INPUTS ============ -->
+  <div class="rail">
+
+    <section class="card"><div class="pad">
+      <div class="shead"><span class="step">A</span><h2>Your city</h2></div>
+      <p class="lede">Pick your city to load its baseline, or choose <em>Other city</em> to enter your own figures.</p>
+      <div class="fgroup">
+        <div class="f">
+          <label for="city">City</label>
+          <div class="inrow"><select id="city"></select></div>
+        </div>
+        <div class="f derived" id="d-pop"><label>Population</label><span class="v num" id="o-pop">&mdash;</span></div>
+        <div class="f derived" id="d-msw"><label>Total municipal solid waste</label><span class="v num" id="o-msw">&mdash;</span></div>
+        <div class="f" id="f-mswin" hidden>
+          <label for="msw">Total municipal solid waste</label>
+          <div class="inrow update"><input id="msw" type="number" min="0" step="any" inputmode="decimal"><span class="unit">t / year</span></div>
+        </div>
+        <div class="f" id="f-popin" hidden>
+          <label for="pop">Population</label>
+          <div class="inrow update"><input id="pop" type="number" min="0" step="any" inputmode="decimal"><span class="unit">people</span></div>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="card"><div class="pad">
+      <div class="shead"><span class="step">B</span><h2>Waste and collection</h2><span class="chip u"><i class="dot"></i>Update</span></div>
+      <p class="lede">Both values are prefilled from the project dataset. Replace them with your own
+         figures where you have them.</p>
+      <div class="fgroup">
+        <div class="f">
+          <label for="plastic">Annual plastic waste generated<span class="pre">PREFILLED</span></label>
+          <div class="inrow update"><input id="plastic" type="number" min="0" step="any" inputmode="decimal"><span class="unit">t / year</span></div>
+          <span class="hint">Provide updated annual plastic waste, if available.</span>
+        </div>
+        <div class="f derived"><label>Plastic share of total waste</label><span class="v num" id="o-share">&mdash;</span></div>
+        <div class="f">
+          <label for="coll">Collection rate<span class="pre">PREFILLED</span></label>
+          <div class="inrow update"><input id="coll" type="number" min="0" max="100" step="any" inputmode="decimal"><span class="unit">%</span></div>
+          <span class="hint">Share of generated waste collected and delivered to a recognised recovery
+            or disposal facility.</span>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="card"><div class="pad">
+      <div class="shead"><span class="step">C</span><h2>Leakage to the environment</h2><span class="chip u"><i class="dot"></i>Populate</span></div>
+      <p class="lede">These two are empty by design. Estimate them from your city's own data.</p>
+      <div class="fgroup">
+        <div class="f">
+          <label for="eu">Plastic emissions from uncollected waste</label>
+          <div class="inrow update" id="w-eu"><input id="eu" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="enter %"><span class="unit">% of uncollected</span></div>
+          <span class="hint">Provide an estimate based on city data.</span>
+          <div class="proxy" id="p-eu" hidden>
+            <div>Dataset proxy for <span id="p-eu-city"></span>: <b id="p-eu-val"></b>.
+              <button class="btn" id="p-eu-btn" style="margin-top:6px">Use this proxy</button></div>
+          </div>
+        </div>
+        <div class="f">
+          <label for="ec">Plastic emissions from collected waste</label>
+          <div class="inrow update" id="w-ec"><input id="ec" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="enter %"><span class="unit">% of collected</span></div>
+          <span class="hint">Losses in collection and disposal: inadequate containment, open vehicles,
+            overflowing points, waste dropped in transport, wind-blown plastics, landfill erosion.</span>
+          <div class="proxy" id="p-ec" hidden>
+            <div>Dataset proxy for <span id="p-ec-city"></span>: <b id="p-ec-val"></b>.
+              <button class="btn" id="p-ec-btn" style="margin-top:6px">Use this proxy</button></div>
+          </div>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="card"><div class="pad">
+      <div class="shead"><span class="step">D</span><h2>Share reaching the ocean</h2><span class="chip r"><i class="dot"></i>Review</span></div>
+      <p class="lede">Proposed proxies. Check whether they fit your city and replace where relevant.</p>
+      <div class="fgroup">
+        <div class="f">
+          <label for="mu">Marine leakage, uncollected stream</label>
+          <div class="inrow review"><select id="mu">
+            <option value="0.15">15% &middot; low connectivity</option>
+            <option value="0.25">25% &middot; moderate connectivity</option>
+            <option value="0.4" selected>40% &middot; high connectivity</option>
+          </select></div>
+          <span class="hint">Select the conversion range based on climate, topography, vegetation and
+            infrastructure that may remove mismanaged waste before it reaches waterways.</span>
+        </div>
+        <div class="f">
+          <label for="mc">Marine leakage, collected stream</label>
+          <div class="inrow review"><input id="mc" type="number" min="0" max="100" step="any" inputmode="decimal"><span class="unit">%</span></div>
+          <span class="hint">Estimate marine leakage from collection and disposal, for example known
+            inefficiencies or a recent material flow analysis.</span>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="card"><div class="pad">
+      <div class="shead"><span class="step">E</span><h2>Project horizon</h2></div>
+      <div class="fgroup">
+        <div class="f">
+          <label for="growth">Annual growth rate<span class="pre">PREFILLED</span></label>
+          <div class="inrow update"><input id="growth" type="number" step="any" inputmode="decimal"><span class="unit">% / year</span></div>
+          <span class="hint">Population growth, used to compound the baseline across the project.</span>
+        </div>
+        <div class="f">
+          <label for="years">Project duration</label>
+          <div class="inrow"><input id="years" type="number" min="1" max="30" step="1" inputmode="numeric"><span class="unit">years</span></div>
+        </div>
+      </div>
+      <div class="btnrow" style="margin-top:15px"><button class="btn" id="reset">Reset to dataset values</button></div>
+    </div></section>
+
+  </div>
+
+  <!-- ============ RIGHT: RESULTS ============ -->
+  <div class="right">
+
+    <div class="todo" id="todo" hidden>
+      <span class="mk">!</span>
+      <div id="todo-txt"></div>
+    </div>
+
+    <section>
+      <div class="shead"><h2 id="res-title">Baseline result</h2></div>
+      <p class="lede" id="res-sub"></p>
+      <div class="tiles">
+        <div class="tile hero">
+          <span class="k">Marine plastic, annual</span>
+          <span class="v num" id="r-annual">&mdash;</span>
+          <span class="s">tonnes per year entering the ocean</span>
+        </div>
+        <div class="tile">
+          <span class="k">Over the project</span>
+          <span class="v num" id="r-cum">&mdash;</span>
+          <span class="s" id="r-cum-sub">tonnes, compounded</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card"><div class="pad">
+      <div class="shead"><h3>Tracking plastic flows in your city</h3></div>
+      <div class="diagwrap"><svg class="sankey" id="sankey" viewBox="0 0 980 440" role="img"
+        aria-labelledby="sk-title" preserveAspectRatio="xMidYMid meet"><title id="sk-title">Waste flow from total plastic generated to marine plastics</title></svg></div>
+      <div class="legend">
+        <span><i style="background:var(--managed)"></i>Retained in the system</span>
+        <span><i style="background:var(--uncoll)"></i>Escapes to the environment</span>
+        <span><i style="background:var(--land)"></i>Stays on land</span>
+        <span><i style="background:var(--marine)"></i>Reaches the ocean</span>
+      </div>
+      <p class="scalenote">Ribbon width is proportional to tonnage, with a minimum width so that small
+        flows stay visible. Read the figure on each node for the exact value.</p>
+    </div></section>
+
+    <section class="card"><div class="pad">
+      <div class="shead"><h3>Contribution by stream</h3></div>
+      <div class="tblwrap"><table>
+        <thead><tr><th>Stream</th><th>Plastic</th><th>Escapes</th><th>To ocean</th><th>Marine plastic</th><th>Share</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table></div>
+    </div></section>
+
+    <section class="card"><div class="pad">
+      <div class="shead"><h3>What your action could prevent</h3></div>
+      <p class="lede">Three ways an intervention changes the baseline. Move a lever to see the effect.
+         Indicative only, for structuring the discussion.</p>
+      <div class="lev">
+        <div class="top"><span class="nm">1. Source reduction</span><span class="pc" id="v-l1">0%</span></div>
+        <span class="ds">Less plastic generated: reuse, refill, bans on single-use items, procurement.</span>
+        <input type="range" id="l1" min="0" max="50" value="0" step="1" aria-label="Source reduction percent">
+      </div>
+      <div class="lev">
+        <div class="top"><span class="nm">2. Flow shift</span><span class="pc" id="v-l2">0%</span></div>
+        <span class="ds">More waste collected: extended coverage, new collection points, informal sector integration.</span>
+        <input type="range" id="l2" min="0" max="100" value="0" step="1" aria-label="Collection gap closed percent">
+      </div>
+      <div class="lev">
+        <div class="top"><span class="nm">3. Improved management</span><span class="pc" id="v-l3">0%</span></div>
+        <span class="ds">Fewer losses per tonne handled: covered vehicles, containment, landfill works, clean-ups.</span>
+        <input type="range" id="l3" min="0" max="80" value="0" step="1" aria-label="Leakage reduction percent">
+      </div>
+      <div class="scen">
+        <div><span class="k">Annual marine plastic prevented</span><span class="v" id="s-annual">0.0 t</span></div>
+        <div><span class="k">Prevented over the project</span><span class="v" id="s-cum">0.0 t</span></div>
+      </div>
+    </div></section>
+
+    <section class="card"><div class="pad">
+      <div class="shead"><h3>Send your figures back</h3></div>
+      <p class="lede">Copy this block into your reply so the network can compile the baselines.</p>
+      <textarea id="out" readonly aria-label="Results summary to copy"></textarea>
+      <div class="btnrow" style="margin-top:11px">
+        <button class="btn primary" id="copy">Copy summary</button>
+        <span class="ok" id="copied" hidden>Copied</span>
+      </div>
+    </div></section>
+
+  </div>
+</div>
+</div>
+
+<footer><div class="wrap">
+  <p><b>What this tool is.</b> It reproduces the baseline calculation from the Circular Cities
+     workshop workbook. The baseline is what your city emits to the ocean if nothing changes. The
+     global environmental benefit is the reduction you achieve against it, which is what the lever
+     panel estimates.</p>
+  <p><b>Where the prefilled numbers come from.</b> Population, total waste, plastic waste, collection
+     coverage and growth rates are from the project dataset for the participating cities. The two
+     leakage percentages are deliberately left empty: no dataset can set them for your city.</p>
+  <details class="meth"><summary>Calculation steps</summary>
+    <ol>
+      <li>Collected plastic <code>= plastic &times; collection rate</code>; uncollected is the remainder.</li>
+      <li>Marine plastic from the uncollected stream <code>= uncollected &times; emissions% &times; marine%</code>.</li>
+      <li>Marine plastic from the collected stream <code>= collected &times; emissions% &times; marine%</code>.</li>
+      <li>Annual total is the sum of the two streams.</li>
+      <li>Project total compounds the annual figure at the growth rate: <code>annual &times; ((1+g)^n &minus; 1) / g</code>, or <code>annual &times; n</code> when growth is zero.</li>
+    </ol>
+  </details>
+</div></footer>
+
+<script>
+"use strict";
+/* ---------- city dataset (project workbook) ---------- */
+var CITIES = [
+ {n:"Barranquilla", c:"Colombia", pop:1377578.14195499, msw:487846.913536402, pl:61945.1995893424, cr:0.986851816524599, g:0.01,     eUnc:828.935324481408, eSys:70.5209908122622, eDis:2.66046937763335},
+ {n:"Cartagena de Indias", c:"Colombia", pop:1014126.28705979, msw:348589.043128583, pl:44473.9044691453, cr:0.9789176521116, g:0.01, eUnc:938.42818291917, eSys:68.0951687670035, eDis:9.17950144161806},
+ {n:"Colón", c:"Panama", pop:260997.727419727, msw:96028.704570665, pl:12271.3879647595, cr:0.822999422242815, g:0,                 eUnc:2162.01116158964, eSys:36.8612283067883, eDis:1708.95512850472},
+ {n:"Kingston", c:"Jamaica", pop:84906.2229223808, msw:36701.4202290662, pl:4650.43627018549, cr:0.93721264469779, g:0,             eUnc:293.346740494304, eSys:4.52300068105419, eDis:0},
+ {n:"Panamá", c:"Panama", pop:1171743.30364967, msw:495831.400799292, pl:63525.8522158725, cr:0.870946541046359, g:0.0146,          eUnc:8164.73104770428, eSys:98.9326358743052, eDis:8.18759594244989},
+ {n:"Saint James", c:"Jamaica", pop:195134.713459249, msw:80393.6465822747, pl:10400.1464789524, cr:0.873211495088114, g:0.0146,    eUnc:1326.01643949187, eSys:30.7250704577194, eDis:8.05429319081323},
+ {n:"Quito", c:"Ecuador", pop:2755840, msw:1228572, pl:156797, cr:0.9529, g:0.00847864596028112},
+ {n:"Santa Marta", c:"Colombia", pop:529327, msw:183528, pl:23874, cr:0.9735, g:0.0101451696044498},
+ {n:"Montevideo", c:"Uruguay", pop:1305767, msw:501970, pl:65497, cr:1, g:-0.000561194093953689},
+ {n:"Puerto Montt", c:"Chile", pop:318092, msw:133730, pl:17450, cr:0.9926, g:0.00480257021978241},
+ {n:"Puerto Varas", c:"Chile", pop:56776, msw:29620, pl:3688, cr:0.9921, g:0.00480257021978241}
+];
+var OTHER = "__other__";
+
+/* dataset-derived proxies, for cities that carry emissions columns */
+function proxies(c){
+  if(c.eUnc === undefined) return null;
+  var coll = c.pl * c.cr, unc = c.pl - coll;
+  var pu = unc > 0 ? Math.min(1, c.eUnc / unc) : 0;
+  var pc = coll > 0 ? (c.eSys + c.eDis) / coll : 0;
+  return {eu:pu, ec:pc, capped:(unc > 0 && c.eUnc / unc > 1)};
+}
+
+/* ---------- helpers ---------- */
+var $ = function(id){ return document.getElementById(id); };
+function t(v, d){ if(!isFinite(v)) return "—";
+  var dd = d === undefined ? (Math.abs(v) >= 1000 ? 0 : 1) : d;
+  return v.toLocaleString("en-GB",{minimumFractionDigits:dd, maximumFractionDigits:dd}); }
+function pct(v, d){ return !isFinite(v) ? "—" : (v*100).toLocaleString("en-GB",{minimumFractionDigits:d===undefined?1:d, maximumFractionDigits:d===undefined?1:d}) + "%"; }
+function num(id){ var v = parseFloat($(id).value); return isFinite(v) ? v : NaN; }
+
+/* ---------- state ---------- */
+function current(){ var v = $("city").value; return v === OTHER ? null : CITIES[+v]; }
+
+function load(){
+  var c = current(), other = !c;
+  $("f-mswin").hidden = !other; $("f-popin").hidden = !other;
+  if(c){
+    $("pop").value = Math.round(c.pop); $("msw").value = c.msw.toFixed(1);
+    $("plastic").value = c.pl.toFixed(1);
+    $("coll").value = +(c.cr*100).toFixed(4);
+    $("growth").value = +(c.g*100).toFixed(4);
+  } else {
+    $("pop").value = ""; $("msw").value = ""; $("plastic").value = "";
+    $("coll").value = ""; $("growth").value = "";
+  }
+  $("eu").value = ""; $("ec").value = "";
+  $("mu").value = "0.4"; $("mc").value = 29; $("years").value = 5;
+  var p = c ? proxies(c) : null;
+  ["eu","ec"].forEach(function(k){
+    var box = $("p-"+k);
+    if(p){ box.hidden = false;
+      $("p-"+k+"-city").textContent = c.n;
+      $("p-"+k+"-val").textContent = pct(p[k], p[k] < 0.01 ? 3 : 2) + (k==="eu" && p.capped ? ", capped at 100%" : "");
+      box.dataset.v = +(p[k]*100).toFixed(k==="eu" ? 2 : 3);
+    } else { box.hidden = true; }
+  });
+  render();
+}
+
+/* ---------- model: mirrors the workbook formula chain ---------- */
+function model(over){
+  over = over || {};
+  var plastic = over.plastic !== undefined ? over.plastic : num("plastic");
+  var msw     = num("msw");
+  var cr      = (over.cr !== undefined ? over.cr : num("coll")) / 100;
+  var eu      = (over.eu !== undefined ? over.eu : num("eu")) / 100;
+  var ec      = (over.ec !== undefined ? over.ec : num("ec")) / 100;
+  var mu      = parseFloat($("mu").value);
+  var mc      = num("mc") / 100;
+  var g       = num("growth") / 100;
+  var yrs     = Math.max(1, Math.round(num("years")) || 5);
+
+  var collected   = plastic * cr;
+  var uncollected = plastic - collected;
+  var escU = uncollected * eu,  marU = escU * mu;
+  var escC = collected   * ec,  marC = escC * mc;
+  var annual = marU + marC;
+  var cum = g === 0 ? annual*yrs : annual*((Math.pow(1+g, yrs) - 1)/g);
+
+  return {plastic:plastic, msw:msw, share:plastic/msw, cr:cr, collected:collected,
+    uncollected:uncollected, eu:eu, ec:ec, mu:mu, mc:mc, escU:escU, escC:escC,
+    marU:marU, marC:marC, annual:annual, g:g, yrs:yrs, cum:cum,
+    retC:collected - escC, retU:uncollected - escU,
+    landU:escU - marU, landC:escC - marC};
+}
+
+/* ---------- Sankey ---------- */
+var COLS = ["Plastic generated","Collection split","Fate of each stream","Where it ends up"];
+function sankey(m){
+  var svg = $("sankey"), H = 440, TOP = 46, BOT = 20;
+  var NW = 13, PAD = 16, MINH = 3, MINL = 2.2;
+  var x = [112, 330, 560, 820];
+  var avail = H - TOP - BOT, total = m.plastic;
+  var sc = function(v){ return total > 0 ? Math.max(MINH, v/total*(avail - 3*PAD)) : 0; };
+  var lw = function(v){ return total > 0 ? Math.max(MINL, v/total*(avail - 3*PAD)) : 0; };
+
+  function stack(items, gap){
+    var h = items.reduce(function(a,b){ return a + sc(b.v); }, 0) + gap*(items.length-1);
+    var y = TOP + Math.max(0,(avail - h))/2;
+    return items.map(function(it){ var o = {y:y, h:sc(it.v), v:it.v, l:it.l, s:it.s, c:it.c}; y += o.h + gap; return o; });
+  }
+  var c0 = stack([{v:total, l:"Total plastic", c:"var(--ink-3)"}], 0);
+  var c1 = stack([
+    {v:m.collected,   l:"Collected",   s:pct(m.cr,1)+" of total",      c:"var(--managed)"},
+    {v:m.uncollected, l:"Uncollected", s:pct(1-m.cr,1)+" of total",    c:"var(--uncoll)"}
+  ], PAD);
+  var c2 = stack([
+    {v:m.retC,  l:"Recycled or landfilled", c:"var(--managed)"},
+    {v:m.escC,  l:"Lost in collection",     c:"var(--uncoll)"},
+    {v:m.escU,  l:"Dumped or discarded",    c:"var(--uncoll)"},
+    {v:m.retU,  l:"Burned or contained",    c:"var(--land)"}
+  ], PAD*0.62);
+  var c3 = stack([
+    {v:m.retC + m.retU,  l:"Stays in system", c:"var(--managed)"},
+    {v:m.landC + m.landU,l:"Stays on land",   c:"var(--land)"},
+    {v:m.annual,         l:"Marine plastics", s:"reaches the ocean", c:"var(--marine)"}
+  ], PAD);
+
+  function ribbon(a, ay, b, by, v, fill, op){
+    var h1 = lw(v), h2 = lw(v);
+    var x1 = a + NW, x2 = b, mx = (x1 + x2)/2;
+    return '<path d="M'+x1+','+ay+' C'+mx+','+ay+' '+mx+','+by+' '+x2+','+by
+      +' L'+x2+','+(by+h2)+' C'+mx+','+(by+h2)+' '+mx+','+(ay+h1)+' '+x1+','+(ay+h1)+' Z"'
+      +' fill="'+fill+'" opacity="'+op+'"/>';
+  }
+  var oC = {}, oT = {}, g = "";
+  function flow(si, sCol, ti, tCol, v, fill){
+    if(!(v > 0)) return;
+    var s = sCol[si], tg = tCol[ti];
+    var ay = s.y + (oC[si+"-"+sCol.length] = (oC[si+"-"+sCol.length] || 0)) ;
+    var by = tg.y + (oT[ti+"-"+tCol.length] = (oT[ti+"-"+tCol.length] || 0));
+    g += ribbon(x[sCol===c0?0:sCol===c1?1:2], ay, x[tCol===c1?1:tCol===c2?2:3], by, v, fill, .42);
+    oC[si+"-"+sCol.length] += lw(v); oT[ti+"-"+tCol.length] += lw(v);
+  }
+  flow(0,c0,0,c1,m.collected,"var(--managed)");
+  flow(0,c0,1,c1,m.uncollected,"var(--uncoll)");
+  oC = {}; oT = {};
+  flow(0,c1,0,c2,m.retC,"var(--managed)");
+  flow(0,c1,1,c2,m.escC,"var(--uncoll)");
+  flow(1,c1,2,c2,m.escU,"var(--uncoll)");
+  flow(1,c1,3,c2,m.retU,"var(--land)");
+  oC = {}; oT = {};
+  flow(0,c2,0,c3,m.retC,"var(--managed)");
+  flow(1,c2,2,c3,m.marC,"var(--marine)");
+  flow(1,c2,1,c3,m.landC,"var(--land)");
+  flow(2,c2,2,c3,m.marU,"var(--marine)");
+  flow(2,c2,1,c3,m.landU,"var(--land)");
+  flow(3,c2,0,c3,m.retU,"var(--managed)");
+
+  /* labels sit at their node's centre, then get pushed apart so none overlap */
+  function place(col){
+    var lines = col.map(function(n){ return n.s ? 3 : 2; });
+    var pitch = Math.max.apply(null, lines) * 15 + 7;
+    var ly = col.map(function(n){ return n.y + n.h/2; });
+    for(var i = 1; i < ly.length; i++) ly[i] = Math.max(ly[i], ly[i-1] + pitch);
+    var last = ly.length - 1, limit = H - BOT - (lines[last]-1)*7.5;
+    if(ly[last] > limit){
+      ly[last] = limit;
+      for(var j = last-1; j >= 0; j--) ly[j] = Math.min(ly[j], ly[j+1] - pitch);
+    }
+    var top = TOP + (lines[0]-1)*7.5;
+    if(ly[0] < top){ ly[0] = top; for(var k = 1; k < ly.length; k++) ly[k] = Math.max(ly[k], ly[k-1] + pitch); }
+    return ly;
+  }
+  function nodes(col, ci){
+    var left = ci === 0, s = "", ly = place(col);
+    col.forEach(function(n, i){
+      s += '<rect x="'+x[ci]+'" y="'+n.y+'" width="'+NW+'" height="'+n.h+'" rx="3" fill="'+n.c+'"/>';
+      var tx = left ? x[ci] - 11 : x[ci] + NW + 11, anc = left ? "end" : "start";
+      var cy = n.y + n.h/2, lab = ly[i];
+      /* leader line where the label had to move off its node */
+      if(Math.abs(lab - cy) > 2){
+        var hx = left ? x[ci] - 5 : x[ci] + NW + 5;
+        s += '<path d="M'+(left?x[ci]:x[ci]+NW)+','+cy+' L'+hx+','+lab+'" stroke="var(--line-2)" stroke-width="1" fill="none"/>';
+      }
+      var lines = [{t:n.l, c:"nlab"}, {t:t(n.v)+" t", c:"nval"}];
+      if(n.s) lines.push({t:n.s, c:"nsub"});
+      var y0 = lab - (lines.length-1)*7.5;
+      lines.forEach(function(L,j){
+        s += '<text class="'+L.c+'" x="'+tx+'" y="'+(y0 + j*15)+'" text-anchor="'+anc+'" dominant-baseline="middle">'+L.t+'</text>';
+      });
+    });
+    return s;
+  }
+  var hd = "";
+  [c0,c1,c2,c3].forEach(function(col,ci){
+    hd += '<text class="colhd" x="'+(ci===0 ? 0 : x[ci])+'" y="21" text-anchor="start">'+COLS[ci]+'</text>';
+  });
+  svg.innerHTML = '<title id="sk-title">Waste flow from total plastic generated to marine plastics</title>'
+    + hd + g + nodes(c0,0) + nodes(c1,1) + nodes(c2,2) + nodes(c3,3);
+}
+
+/* ---------- render ---------- */
+function render(){
+  var c = current(), m = model();
+  $("o-pop").textContent  = c ? t(c.pop,0) : "—";
+  $("o-msw").textContent  = isFinite(m.msw) ? t(m.msw,0) + " t / year" : "—";
+  $("o-share").textContent = isFinite(m.share) ? pct(m.share,1) + " of total waste" : "—";
+  $("f-popin").hidden = !!c; $("f-mswin").hidden = !!c;
+  $("d-pop").hidden = !c; $("d-msw").hidden = !c;
+
+  var missing = [];
+  if(!isFinite(m.eu)) missing.push("emissions from uncollected waste");
+  if(!isFinite(m.ec)) missing.push("emissions from collected waste");
+  $("w-eu").classList.toggle("empty", !isFinite(m.eu));
+  $("w-ec").classList.toggle("empty", !isFinite(m.ec));
+  var todo = $("todo");
+  if(missing.length){
+    todo.hidden = false;
+    $("todo-txt").innerHTML = "The baseline needs <b>" + missing.join("</b> and <b>") +
+      "</b>. Enter your city's estimate in section C, or start from the dataset proxy where one is offered.";
+  } else { todo.hidden = true; }
+
+  var ready = isFinite(m.annual);
+  $("res-title").textContent = (c ? c.n : "Your city") + ": marine plastic baseline";
+  $("res-sub").textContent = ready
+    ? "Of " + t(m.plastic) + " t of plastic waste generated each year, " + t(m.annual) +
+      " t reaches the ocean, which is " + pct(m.annual/m.plastic, 2) + " of what the city generates."
+    : "Complete section C to calculate the baseline.";
+
+  $("r-annual").textContent = ready ? t(m.annual) : "—";
+  $("r-cum").textContent    = ready ? t(m.cum) : "—";
+  $("r-cum-sub").textContent = "tonnes over " + m.yrs + " years at " + pct(m.g,2) + " growth";
+
+  sankey(ready ? m : Object.assign({}, m, {eu:0,ec:0,escU:0,escC:0,marU:0,marC:0,annual:0,
+    retC:m.collected, retU:m.uncollected, landU:0, landC:0}));
+
+  var rows = [
+    {k:"Uncollected", c:"var(--uncoll)", p:m.uncollected, e:m.escU, r:m.mu, v:m.marU},
+    {k:"Collected",   c:"var(--managed)", p:m.collected,  e:m.escC, r:m.mc, v:m.marC}
+  ];
+  $("tbody").innerHTML = rows.map(function(r){
+    return '<tr><td><span class="sw" style="background:'+r.c+'"></span>'+r.k+'</td>'
+      + '<td class="n">'+t(r.p)+' t</td><td class="n">'+(isFinite(r.e)?t(r.e)+" t":"—")+'</td>'
+      + '<td class="n">'+pct(r.r,0)+'</td><td class="n">'+(isFinite(r.v)?t(r.v)+" t":"—")+'</td>'
+      + '<td class="n">'+(ready && m.annual>0 ? pct(r.v/m.annual,0) : "—")+'</td></tr>';
+  }).join("")
+   + '<tr class="tot"><td>Marine plastic, annual</td><td class="n">'+t(m.plastic)+' t</td>'
+   + '<td class="n">'+(ready?t(m.escU+m.escC)+" t":"—")+'</td><td class="n"></td>'
+   + '<td class="n">'+(ready?t(m.annual)+" t":"—")+'</td><td class="n">'+(ready?"100%":"—")+'</td></tr>';
+
+  scenario(m, ready);
+  $("out").value = summary(c, m, ready);
+}
+
+/* ---------- intervention levers ---------- */
+function scenario(base, ready){
+  var l1 = +$("l1").value, l2 = +$("l2").value, l3 = +$("l3").value;
+  $("v-l1").textContent = l1 + "%"; $("v-l2").textContent = l2 + "%"; $("v-l3").textContent = l3 + "%";
+  if(!ready){ $("s-annual").textContent = "—"; $("s-cum").textContent = "—"; return; }
+  var gap = 1 - base.cr;
+  var m2 = model({
+    plastic: base.plastic * (1 - l1/100),
+    cr: (base.cr + gap*(l2/100)) * 100,
+    eu: base.eu * (1 - l3/100) * 100,
+    ec: base.ec * (1 - l3/100) * 100
+  });
+  var dA = base.annual - m2.annual, dC = base.cum - m2.cum;
+  $("s-annual").textContent = t(dA) + " t";
+  $("s-cum").textContent = t(dC) + " t";
+}
+
+/* ---------- export ---------- */
+function summary(c, m, ready){
+  if(!ready) return "Complete the two leakage percentages in section C to produce a summary.";
+  var L = [];
+  L.push("MARINE PLASTIC BASELINE");
+  L.push("City: " + (c ? c.n + " (" + c.c + ")" : "Other city"));
+  L.push("Date: " + new Date().toISOString().slice(0,10));
+  L.push("");
+  L.push("INPUTS");
+  L.push("  Total municipal solid waste ....... " + t(m.msw,0) + " t/year");
+  L.push("  Annual plastic waste generated .... " + t(m.plastic) + " t/year");
+  L.push("  Plastic share of total waste ...... " + pct(m.share,1));
+  L.push("  Collection rate ................... " + pct(m.cr,2));
+  L.push("  Emissions from uncollected waste .. " + pct(m.eu,1) + " of uncollected");
+  L.push("  Emissions from collected waste .... " + pct(m.ec,2) + " of collected");
+  L.push("  Marine leakage, uncollected ....... " + pct(m.mu,0));
+  L.push("  Marine leakage, collected ......... " + pct(m.mc,1));
+  L.push("  Growth rate / duration ............ " + pct(m.g,2) + " / " + m.yrs + " years");
+  L.push("");
+  L.push("BASELINE");
+  L.push("  Collected plastic ................. " + t(m.collected) + " t/year");
+  L.push("  Uncollected plastic ............... " + t(m.uncollected) + " t/year");
+  L.push("  Marine plastic, uncollected ....... " + t(m.marU) + " t/year");
+  L.push("  Marine plastic, collected ......... " + t(m.marC) + " t/year");
+  L.push("  MARINE PLASTIC, ANNUAL ............ " + t(m.annual) + " t/year");
+  L.push("  MARINE PLASTIC, " + m.yrs + "-YEAR TOTAL ...... " + t(m.cum) + " t");
+  var l1 = +$("l1").value, l2 = +$("l2").value, l3 = +$("l3").value;
+  if(l1 || l2 || l3){
+    L.push("");
+    L.push("INTERVENTION SCENARIO (indicative)");
+    L.push("  Source reduction .................. " + l1 + "% less plastic generated");
+    L.push("  Flow shift ........................ " + l2 + "% of the collection gap closed");
+    L.push("  Improved management ............... " + l3 + "% lower leakage per tonne");
+    L.push("  Prevented, annual ................. " + $("s-annual").textContent);
+    L.push("  Prevented over " + m.yrs + " years ........... " + $("s-cum").textContent);
+  }
+  return L.join("\n");
+}
+
+/* ---------- wiring ---------- */
+(function init(){
+  var sel = $("city");
+  sel.innerHTML = CITIES.map(function(c,i){ return '<option value="'+i+'">'+c.n+", "+c.c+'</option>'; }).join("")
+    + '<option value="'+OTHER+'">Other city, enter my own figures</option>';
+  sel.value = "0";
+
+  sel.addEventListener("change", load);
+  ["plastic","coll","eu","ec","mc","growth","years","msw","pop"].forEach(function(id){
+    $(id).addEventListener("input", render);
+  });
+  $("mu").addEventListener("change", render);
+  ["l1","l2","l3"].forEach(function(id){ $(id).addEventListener("input", render); });
+  $("reset").addEventListener("click", function(){ ["l1","l2","l3"].forEach(function(id){ $(id).value = 0; }); load(); });
+  ["eu","ec"].forEach(function(k){
+    $("p-"+k+"-btn").addEventListener("click", function(){ $(k).value = $("p-"+k).dataset.v; render(); });
+  });
+  $("copy").addEventListener("click", function(){
+    var ta = $("out"), done = function(){ var o = $("copied"); o.hidden = false; setTimeout(function(){ o.hidden = true; }, 1800); };
+    try{
+      navigator.clipboard.writeText(ta.value).then(done, function(){ ta.select(); done(); });
+    }catch(e){ ta.select(); done(); }
+  });
+  load();
+})();
+</script>
+
+</body>
+</html>
