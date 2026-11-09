@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Marine plastic baseline calculator for cities in the GEF Circular Cities Intercity Network. Enter your city's waste and leakage figures to see its marine plastic baseline.">
+<meta name="description" content="Estimate marine plastic leakage for cities in the GEF Circular Cities Intercity Network.">
 <style>
 :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html,body{margin:0}
@@ -67,8 +67,6 @@ h1,h2,h3,h4{font-family:var(--ff-display);margin:0;text-wrap:balance;letter-spac
 .eyebrow{font-family:var(--ff-body);font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;opacity:.86}
 .mast h1{font-size:clamp(26px,4.6vw,40px);font-weight:700;margin-top:10px;max-width:22ch}
 .mast p{margin:10px 0 0;max-width:62ch;font-size:15px;opacity:.93}
-.mast .tgt{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.mast .tgt span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.26);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:500}
 
 /* grid */
 .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);gap:22px;align-items:start;padding-block:24px 40px}
@@ -176,13 +174,7 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
   <div class="wrap">
     <div class="eyebrow">GEF Circular Cities &middot; Intercity Network</div>
     <h1>Marine plastic baseline</h1>
-    <p>Trace your city's plastic waste from generation to the ocean, then see what your planned
-       action could prevent. Six inputs, taken from the workshop baseline tool.</p>
-    <div class="tgt">
-      <span>Project target 5,065 t</span>
-      <span>Attributed to the network 2,800 t</span>
-      <span>Core Indicator 5.3</span>
-    </div>
+    <p>Estimate marine plastic leakage for your city.</p>
   </div>
 </header>
 
@@ -348,9 +340,8 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
 
 <footer><div class="wrap">
   <p><b>What this tool is.</b> It reproduces the baseline calculation from the Circular Cities
-     workshop workbook. The baseline is what your city emits to the ocean if nothing changes. The
-     global environmental benefit is the reduction you achieve against it, which is what the lever
-     panel estimates.</p>
+     workshop workbook. The baseline is what your city emits to the ocean each year if nothing
+     changes.</p>
   <p><b>Where the prefilled numbers come from.</b> Population, total waste, plastic waste and
      collection coverage are from the project dataset for the participating cities. Annual population
      growth is fixed, taken from World Bank data. The two leakage percentages are deliberately left
