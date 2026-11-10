@@ -223,23 +223,25 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
 
     <section class="card"><div class="pad">
       <div class="shead"><span class="step">B</span><h2>Waste and collection</h2><span class="chip u"><i class="dot"></i>Confirm values</span></div>
-      <p class="lede">All three are prefilled from the project dataset. Replace them with your own
+      <p class="lede">Prefilled from the project dataset where available. Replace them with your own
          figures where you have them.</p>
       <div class="fgroup">
+        <p class="fixednote span2" id="nodata" hidden>The project dataset has no waste figures for
+          this city, so these three are empty. Enter your own.</p>
         <div class="f">
-          <label for="msw">Total municipal solid waste<span class="pre">PREFILLED</span></label>
+          <label for="msw">Total municipal solid waste<span class="pre" id="pre-msw">PREFILLED</span></label>
           <div class="inrow update"><input id="msw" type="number" min="0" step="any" inputmode="decimal"><span class="unit">t / year</span></div>
           <span class="hint">All waste generated in the city each year, across every material, not
             only plastic.</span>
         </div>
         <div class="f">
-          <label for="plastic">Annual plastic waste generated<span class="pre">PREFILLED</span></label>
+          <label for="plastic">Annual plastic waste generated<span class="pre" id="pre-plastic">PREFILLED</span></label>
           <div class="inrow update"><input id="plastic" type="number" min="0" step="any" inputmode="decimal"><span class="unit">t / year</span></div>
           <span class="hint">The plastic fraction of that total.</span>
         </div>
         <div class="f derived span2"><label>Plastic share of total waste</label><span class="v num" id="o-share">&mdash;</span></div>
         <div class="f">
-          <label for="coll">Collection rate<span class="pre">PREFILLED</span></label>
+          <label for="coll">Collection rate<span class="pre" id="pre-coll">PREFILLED</span></label>
           <div class="inrow update"><input id="coll" type="number" min="0" max="100" step="any" inputmode="decimal"><span class="unit">%</span></div>
           <span class="hint">Share of generated waste collected and delivered to a recognised recovery
             or disposal facility.</span>
@@ -406,12 +408,17 @@ var CITIES = [
  {n:"Kingston",            c:"Jamaica",   pop:84906.2229223808, msw:36701.4202290662, pl:4650.43627018549, cr:0.93721264469779,   g:0},
  {n:"Montevideo",          c:"Uruguay",   pop:1305767,          msw:501970,           pl:65497,            cr:1,                  g:-0.000561194093953689},
  {n:"Panamá",              c:"Panama",    pop:1171743.30364967, msw:495831.400799292, pl:63525.8522158725, cr:0.870946541046359,  g:0.0146},
+ {n:"Playa del Carmen",    c:"Mexico",    pop:333800,           msw:null,             pl:null,             cr:null,               g:0.00826382426690595},
  {n:"Puerto Montt",        c:"Chile",     pop:318092,           msw:133730,           pl:17450,            cr:0.9926,             g:0.00480257021978241},
  {n:"Puerto Varas",        c:"Chile",     pop:56776,            msw:29620,            pl:3688,             cr:0.9921,             g:0.00480257021978241},
  {n:"Quito",               c:"Ecuador",   pop:2755840,          msw:1228572,          pl:156797,           cr:0.9529,             g:0.00847864596028112},
  {n:"Saint James",         c:"Jamaica",   pop:195134.713459249, msw:80393.6465822747, pl:10400.1464789524, cr:0.873211495088114,  g:0.0146},
- {n:"Santa Marta",         c:"Colombia",  pop:529327,           msw:183528,           pl:23874,            cr:0.9735,             g:0.0101451696044498}
+ {n:"Santa Marta",         c:"Colombia",  pop:529327,           msw:183528,           pl:23874,            cr:0.9735,             g:0.0101451696044498},
+ {n:"Tulum",               c:"Mexico",    pop:46721,            msw:null,             pl:null,             cr:null,               g:0.00826382426690595}
 ];
+
+/* the sheet carries only a population and growth rate for some cities */
+function hasData(c){ return !!c && c.pl != null; }
 var OTHER = "__other__";
 var YEARS = 5;   /* project duration, fixed */
 
@@ -431,10 +438,11 @@ function load(){
   $("f-cityname").hidden = !!c; $("f-country").hidden = !!c;
   if(c){ $("cityname").value = ""; $("country").value = ""; }
   if(c){
-    $("pop").value = Math.round(c.pop); $("msw").value = +c.msw.toFixed(1);
-    $("plastic").value = +c.pl.toFixed(1);
-    $("coll").value = +(c.cr*100).toFixed(4);
-    $("growth").value = +(c.g*100).toFixed(4);
+    $("pop").value     = Math.round(c.pop);
+    $("msw").value     = c.msw == null ? "" : +c.msw.toFixed(1);
+    $("plastic").value = c.pl  == null ? "" : +c.pl.toFixed(1);
+    $("coll").value    = c.cr  == null ? "" : +(c.cr*100).toFixed(4);
+    $("growth").value  = +(c.g*100).toFixed(4);
   } else {
     $("pop").value = ""; $("msw").value = ""; $("plastic").value = "";
     $("coll").value = ""; $("growth").value = "";
@@ -488,6 +496,11 @@ function render(){
   $("f-popin").hidden = !!c;     $("d-pop").hidden = !c;
   $("f-growthin").hidden = !!c;  $("d-growth").hidden = !c;
   $("growthnote").hidden = !c;
+  $("nodata").hidden = !c || hasData(c);
+  /* the badge marks what the dataset supplied, not whatever is in the box now */
+  $("pre-msw").hidden     = !c || c.msw == null;
+  $("pre-plastic").hidden = !c || c.pl  == null;
+  $("pre-coll").hidden    = !c || c.cr  == null;
 
   var missing = [];
   if(!isFinite(m.eu)) missing.push("emissions from uncollected waste");
@@ -551,7 +564,7 @@ function summary(c, m, ready){
 
 /* ---------- submission ---------- */
 /* Apps Script web app URL, ending in /exec. Empty hides the Submit button. */
-var ENDPOINT = "";
+var ENDPOINT = "https://script.google.com/macros/s/AKfycbywVhBLXK472mEHkgcg03QJ60wfG6KN5KAMuf1wV1Q2CVf1QenRRCaWFn1xxS3CvCuPfQ/exec";
 
 function cityName(c){ return c ? c.n : ($("cityname").value.trim() || "Other city"); }
 
@@ -627,7 +640,9 @@ function wireSubmit(){
 /* ---------- wiring ---------- */
 (function init(){
   var sel = $("city");
-  sel.innerHTML = CITIES.map(function(c,i){ return '<option value="'+i+'">'+c.n+", "+c.c+'</option>'; }).join("")
+  sel.innerHTML = CITIES.map(function(c,i){
+      return '<option value="'+i+'">' + c.n + ", " + c.c
+           + (hasData(c) ? "" : " (data unavailable)") + '</option>'; }).join("")
     + '<option value="'+OTHER+'">Other city, enter my own figures</option>';
   sel.value = "0";
 
