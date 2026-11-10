@@ -394,18 +394,23 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
 <script>
 "use strict";
 /* ---------- city dataset (project workbook) ---------- */
+/* From the project workbook, Cottom Data sheet. cr and g are fractions, not percentages:
+   Ciudad de México and Buenos Aires are stored there as 97.03 and 96.84, which is 97.03%
+   and 96.84%, so they appear here as 0.9703 and 0.9684. */
 var CITIES = [
- {n:"Barranquilla", c:"Colombia", pop:1377578.14195499, msw:487846.913536402, pl:61945.1995893424, cr:0.986851816524599, g:0.01,     eUnc:828.935324481408, eSys:70.5209908122622, eDis:2.66046937763335},
- {n:"Cartagena de Indias", c:"Colombia", pop:1014126.28705979, msw:348589.043128583, pl:44473.9044691453, cr:0.9789176521116, g:0.01, eUnc:938.42818291917, eSys:68.0951687670035, eDis:9.17950144161806},
- {n:"Colón", c:"Panama", pop:260997.727419727, msw:96028.704570665, pl:12271.3879647595, cr:0.822999422242815, g:0,                 eUnc:2162.01116158964, eSys:36.8612283067883, eDis:1708.95512850472},
- {n:"Kingston", c:"Jamaica", pop:84906.2229223808, msw:36701.4202290662, pl:4650.43627018549, cr:0.93721264469779, g:0,             eUnc:293.346740494304, eSys:4.52300068105419, eDis:0},
- {n:"Panamá", c:"Panama", pop:1171743.30364967, msw:495831.400799292, pl:63525.8522158725, cr:0.870946541046359, g:0.0146,          eUnc:8164.73104770428, eSys:98.9326358743052, eDis:8.18759594244989},
- {n:"Saint James", c:"Jamaica", pop:195134.713459249, msw:80393.6465822747, pl:10400.1464789524, cr:0.873211495088114, g:0.0146,    eUnc:1326.01643949187, eSys:30.7250704577194, eDis:8.05429319081323},
- {n:"Quito", c:"Ecuador", pop:2755840, msw:1228572, pl:156797, cr:0.9529, g:0.00847864596028112},
- {n:"Santa Marta", c:"Colombia", pop:529327, msw:183528, pl:23874, cr:0.9735, g:0.0101451696044498},
- {n:"Montevideo", c:"Uruguay", pop:1305767, msw:501970, pl:65497, cr:1, g:-0.000561194093953689},
- {n:"Puerto Montt", c:"Chile", pop:318092, msw:133730, pl:17450, cr:0.9926, g:0.00480257021978241},
- {n:"Puerto Varas", c:"Chile", pop:56776, msw:29620, pl:3688, cr:0.9921, g:0.00480257021978241}
+ {n:"Barranquilla",        c:"Colombia",  pop:1377578.14195499, msw:487846.913536402, pl:61945.1995893424, cr:0.986851816524599,  g:0.01},
+ {n:"Buenos Aires",        c:"Argentina", pop:2845735,          msw:1892609,          pl:242375,           cr:0.9684,             g:0.00339100654860035},
+ {n:"Cartagena de Indias", c:"Colombia",  pop:1014126.28705979, msw:348589.043128583, pl:44473.9044691453, cr:0.9789176521116,    g:0.01},
+ {n:"Ciudad de México",    c:"Mexico",    pop:7388200,          msw:3726229,          pl:486199,           cr:0.9703,             g:0.00826382426690595},
+ {n:"Colón",               c:"Panama",    pop:260997.727419727, msw:96028.704570665,  pl:12271.3879647595, cr:0.822999422242815,  g:0},
+ {n:"Kingston",            c:"Jamaica",   pop:84906.2229223808, msw:36701.4202290662, pl:4650.43627018549, cr:0.93721264469779,   g:0},
+ {n:"Montevideo",          c:"Uruguay",   pop:1305767,          msw:501970,           pl:65497,            cr:1,                  g:-0.000561194093953689},
+ {n:"Panamá",              c:"Panama",    pop:1171743.30364967, msw:495831.400799292, pl:63525.8522158725, cr:0.870946541046359,  g:0.0146},
+ {n:"Puerto Montt",        c:"Chile",     pop:318092,           msw:133730,           pl:17450,            cr:0.9926,             g:0.00480257021978241},
+ {n:"Puerto Varas",        c:"Chile",     pop:56776,            msw:29620,            pl:3688,             cr:0.9921,             g:0.00480257021978241},
+ {n:"Quito",               c:"Ecuador",   pop:2755840,          msw:1228572,          pl:156797,           cr:0.9529,             g:0.00847864596028112},
+ {n:"Saint James",         c:"Jamaica",   pop:195134.713459249, msw:80393.6465822747, pl:10400.1464789524, cr:0.873211495088114,  g:0.0146},
+ {n:"Santa Marta",         c:"Colombia",  pop:529327,           msw:183528,           pl:23874,            cr:0.9735,             g:0.0101451696044498}
 ];
 var OTHER = "__other__";
 var YEARS = 5;   /* project duration, fixed */
