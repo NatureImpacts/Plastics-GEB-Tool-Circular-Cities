@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Estimate marine plastic leakage for cities in the GEF Circular Cities Intercity Network.">
+<meta name="description" content="Estimate marine plastic leakage for cities in the GEF Circular Cities Intercity Network. English and Spanish.">
 <style>
 :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html,body{margin:0}
@@ -11,7 +11,7 @@ html,body{margin:0}
 <title>Marine Plastic Baseline</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: instrument panel. Left rail of city inputs, right reading area of results and waste-flow diagram. Stacks to one column on phone. */
+/* Layout: instrument panel. Wide form on the left, sticky results on the right, stacked on phone. */
 :root{
   --bg:#f5f8f6; --surface:#ffffff; --surface-2:#eaf0ec; --surface-3:#dfe8e2;
   --ink:#0d1a13; --ink-2:#44544b; --ink-3:#6b7a71;
@@ -63,10 +63,18 @@ h1,h2,h3,h4{font-family:var(--ff-display);margin:0;text-wrap:balance;letter-spac
 :root[data-theme="dark"] .mast,:root:not([data-theme="light"]) .mast{color:#06120c}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .mast{color:#fff}}
 :root[data-theme="light"] .mast{color:#fff}
-.mast .wrap{padding-block:26px 24px}
+.mast .wrap{padding-block:22px 24px}
+.masttop{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .eyebrow{font-family:var(--ff-body);font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;opacity:.86}
 .mast h1{font-size:clamp(26px,4.6vw,40px);font-weight:700;margin-top:10px;max-width:22ch}
 .mast p{margin:10px 0 0;max-width:62ch;font-size:15px;opacity:.93}
+.langsel{display:inline-flex;border-radius:999px;overflow:hidden;flex:none;
+  border:1px solid rgba(128,128,128,.45);border-color:color-mix(in srgb,currentColor 38%,transparent)}
+.langbtn{font-family:var(--ff-body);font-size:11.5px;font-weight:700;letter-spacing:.09em;
+  padding:5px 13px;border:0;background:transparent;color:inherit;cursor:pointer;opacity:.72}
+.langbtn[aria-pressed="true"]{opacity:1;background:rgba(128,128,128,.3);
+  background:color-mix(in srgb,currentColor 20%,transparent)}
+.langbtn:focus-visible{outline:2px solid currentColor;outline-offset:-3px}
 
 /* grid */
 .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);gap:22px;align-items:start;padding-block:24px 40px}
@@ -85,7 +93,6 @@ h1,h2,h3,h4{font-family:var(--ff-display);margin:0;text-wrap:balance;letter-spac
 /* section heads */
 .shead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
 .shead h2{font-size:17px;font-weight:600}
-.shead h3{font-size:15.5px;font-weight:600}
 .step{font-family:var(--ff-mono);font-size:11px;font-weight:600;color:var(--brand);border:1px solid var(--line-2);border-radius:5px;padding:1px 6px;letter-spacing:.04em}
 .lede{color:var(--ink-2);font-size:13.5px;margin:2px 0 14px}
 
@@ -93,7 +100,7 @@ h1,h2,h3,h4{font-family:var(--ff-display);margin:0;text-wrap:balance;letter-spac
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;border-radius:5px;padding:3px 8px;font-family:var(--ff-body)}
 .chip.u{background:var(--fill-update);color:var(--chip-update);border:1px solid var(--edge-update)}
 .chip.r{background:var(--fill-review);color:var(--chip-review);border:1px solid var(--edge-review)}
-.chip .dot{width:7px;height:7px;border-radius:2px}
+.chip .dot{width:7px;height:7px;border-radius:2px;flex:none}
 .chip.u .dot{background:var(--edge-update)}
 .chip.r .dot{background:var(--edge-review)}
 
@@ -131,12 +138,9 @@ select{appearance:none;cursor:pointer}
 :root[data-theme="light"] .btn.primary{color:#fff}
 .btn:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap}
-.proxy{display:flex;align-items:flex-start;gap:8px;background:var(--surface-2);border-left:3px solid var(--marine);border-radius:0 7px 7px 0;padding:8px 10px;font-size:12.5px;color:var(--ink-2);margin-top:auto}
-.proxy b{color:var(--ink);font-family:var(--ff-mono);font-weight:600}
 
 /* results */
 .tiles{display:grid;grid-template-columns:minmax(0,1fr);gap:1px;background:var(--line);border-radius:var(--r);overflow:hidden}
-@media (min-width:1081px){.tiles{grid-template-columns:minmax(0,1fr)}}
 .tile{background:var(--surface);padding:17px 18px;display:flex;flex-direction:column;gap:3px;min-width:0}
 .tile .k{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)}
 .tile .v{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-size:clamp(25px,4.6vw,34px);font-weight:600;line-height:1.1;letter-spacing:-.02em}
@@ -185,132 +189,121 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
 <body>
 <header class="mast">
   <div class="wrap">
-    <div class="eyebrow">GEF Circular Cities &middot; Intercity Network</div>
-    <h1>Marine plastic baseline</h1>
-    <p>Estimate marine plastic leakage for your city.</p>
+    <div class="masttop">
+      <div class="eyebrow" data-i18n="eyebrow">GEF Circular Cities &middot; Intercity Network</div>
+      <div class="langsel" id="langsel" role="group" data-i18n-aria="langGroup" aria-label="Language">
+        <button type="button" class="langbtn" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" class="langbtn" data-lang="es" aria-pressed="false">ES</button>
+      </div>
+    </div>
+    <h1 data-i18n="title">Marine plastic baseline</h1>
+    <p data-i18n="sub">Estimate marine plastic leakage for your city.</p>
   </div>
 </header>
 
 <div class="wrap">
 <div class="cols">
 
-  <!-- ============ LEFT RAIL: INPUTS ============ -->
+  <!-- ============ LEFT: THE FORM ============ -->
   <div class="rail">
 
     <section class="card"><div class="pad">
-      <div class="shead"><span class="step">A</span><h2>Your city</h2></div>
-      <p class="lede">Pick your city to load its baseline, or choose <em>Other city</em> to enter your own figures.</p>
+      <div class="shead"><span class="step">A</span><h2 data-i18n="secA">Your city</h2></div>
+      <p class="lede" data-i18n-html="secAlede">Pick your city to load its baseline, or choose <em>Other city</em> to enter your own figures.</p>
       <div class="fgroup">
         <div class="f span2">
-          <label for="city">City</label>
+          <label for="city" data-i18n="fCity">City</label>
           <div class="inrow"><select id="city"></select></div>
         </div>
-        <div class="f derived span2" id="d-pop"><label>Population</label><span class="v num" id="o-pop">&mdash;</span></div>
+        <div class="f derived span2" id="d-pop"><label data-i18n="fPop">Population</label><span class="v num" id="o-pop">&mdash;</span></div>
         <div class="f" id="f-cityname" hidden>
-          <label for="cityname">City name</label>
+          <label for="cityname" data-i18n="fCityName">City name</label>
           <div class="inrow update"><input id="cityname" type="text" autocomplete="off"></div>
         </div>
         <div class="f" id="f-country" hidden>
-          <label for="country">Country</label>
+          <label for="country" data-i18n="fCountry">Country</label>
           <div class="inrow update"><input id="country" type="text" autocomplete="off"></div>
         </div>
         <div class="f span2" id="f-popin" hidden>
-          <label for="pop">Population</label>
-          <div class="inrow update"><input id="pop" type="number" min="0" step="any" inputmode="decimal"><span class="unit">people</span></div>
+          <label for="pop" data-i18n="fPop">Population</label>
+          <div class="inrow update"><input id="pop" type="number" min="0" step="any" inputmode="decimal"><span class="unit" data-i18n="uPeople">people</span></div>
         </div>
       </div>
     </div></section>
 
     <section class="card"><div class="pad">
-      <div class="shead"><span class="step">B</span><h2>Waste and collection</h2><span class="chip u"><i class="dot"></i>Confirm values</span></div>
-      <p class="lede">Prefilled from the project dataset where available. Replace them with your own
-         figures where you have them.</p>
+      <div class="shead"><span class="step">B</span><h2 data-i18n="secB">Waste and collection</h2><span class="chip u"><i class="dot"></i><span data-i18n="chipConfirm">Confirm values</span></span></div>
+      <p class="lede" data-i18n="secBlede">Prefilled from the project dataset where available. Replace them with your own figures where you have them.</p>
       <div class="fgroup">
-        <p class="fixednote span2" id="nodata" hidden>The project dataset has no waste figures for
-          this city, so these three are empty. Enter your own.</p>
+        <p class="fixednote span2" id="nodata" data-i18n="noData" hidden>The project dataset has no waste figures for this city, so these three are empty. Enter your own.</p>
         <div class="f">
-          <label for="msw">Total municipal solid waste<span class="pre" id="pre-msw">PREFILLED</span></label>
-          <div class="inrow update"><input id="msw" type="number" min="0" step="any" inputmode="decimal"><span class="unit">t / year</span></div>
-          <span class="hint">All waste generated in the city each year, across every material, not
-            only plastic.</span>
+          <label for="msw"><span data-i18n="fMsw">Total municipal solid waste</span><span class="pre" id="pre-msw" data-i18n="prefilled">PREFILLED</span></label>
+          <div class="inrow update"><input id="msw" type="number" min="0" step="any" inputmode="decimal"><span class="unit" data-i18n="uTyr">t / year</span></div>
+          <span class="hint" data-i18n="hMsw">All waste generated in the city each year, across every material, not only plastic.</span>
         </div>
         <div class="f">
-          <label for="plastic">Annual plastic waste generated<span class="pre" id="pre-plastic">PREFILLED</span></label>
-          <div class="inrow update"><input id="plastic" type="number" min="0" step="any" inputmode="decimal"><span class="unit">t / year</span></div>
-          <span class="hint">The plastic fraction of that total.</span>
+          <label for="plastic"><span data-i18n="fPlastic">Annual plastic waste generated</span><span class="pre" id="pre-plastic" data-i18n="prefilled">PREFILLED</span></label>
+          <div class="inrow update"><input id="plastic" type="number" min="0" step="any" inputmode="decimal"><span class="unit" data-i18n="uTyr">t / year</span></div>
+          <span class="hint" data-i18n="hPlastic">The plastic fraction of that total. It cannot exceed it.</span>
         </div>
-        <div class="f derived span2"><label>Plastic share of total waste</label><span class="v num" id="o-share">&mdash;</span></div>
+        <div class="f derived span2"><label data-i18n="fShare">Plastic share of total waste</label><span class="v num" id="o-share">&mdash;</span></div>
         <div class="f">
-          <label for="coll">Collection rate<span class="pre" id="pre-coll">PREFILLED</span></label>
+          <label for="coll"><span data-i18n="fColl">Collection rate</span><span class="pre" id="pre-coll" data-i18n="prefilled">PREFILLED</span></label>
           <div class="inrow update"><input id="coll" type="number" min="0" max="100" step="any" inputmode="decimal"><span class="unit">%</span></div>
-          <span class="hint">Share of generated waste collected and delivered to a recognised recovery
-            or disposal facility.</span>
+          <span class="hint" data-i18n="hColl">Share of generated waste collected and delivered to a recognised recovery or disposal facility.</span>
         </div>
       </div>
     </div></section>
 
     <section class="card"><div class="pad">
-      <div class="shead"><span class="step">C</span><h2>Leakage to the environment</h2><span class="chip u"><i class="dot"></i>Fill values</span></div>
-      <p class="lede">These two are empty by design. Estimate them from your city's own data.</p>
+      <div class="shead"><span class="step">C</span><h2 data-i18n="secC">Leakage to the environment</h2><span class="chip u"><i class="dot"></i><span data-i18n="chipFill">Fill values</span></span></div>
+      <p class="lede" data-i18n="secClede">These two are empty by design. Estimate them from your city's own data.</p>
       <div class="fgroup">
         <div class="f">
-          <label for="eu">Plastic emissions from uncollected waste</label>
-          <div class="inrow update" id="w-eu"><input id="eu" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="enter %"><span class="unit">% of uncollected</span></div>
-          <span class="hint">Plastic that is never collected and escapes into the environment: open
-            dumping on land and into drains, waste left at unmanaged sites, material washed away by
-            rain, plastic discarded straight into waterways. The rest is burned or buried.</span>
+          <label for="eu" data-i18n="fEu">Plastic emissions from uncollected waste</label>
+          <div class="inrow update" id="w-eu"><input id="eu" type="number" min="0" max="100" step="any" inputmode="decimal" data-i18n-ph="phPct" placeholder="enter %"><span class="unit" data-i18n="uOfUncoll">% of uncollected</span></div>
+          <span class="hint" data-i18n="hEu">Plastic that is never collected and escapes into the environment: open dumping on land and into drains, waste left at unmanaged sites, material washed away by rain, plastic discarded straight into waterways. The rest is burned or buried.</span>
         </div>
         <div class="f">
-          <label for="ec">Plastic emissions from collected waste</label>
-          <div class="inrow update" id="w-ec"><input id="ec" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="enter %"><span class="unit">% of collected</span></div>
-          <span class="hint">Plastic that is collected but still escapes along the way: inadequate
-            containment, open vehicles, overflowing collection points, waste dropped in transport,
-            wind-blown plastics, landfill erosion.</span>
+          <label for="ec" data-i18n="fEc">Plastic emissions from collected waste</label>
+          <div class="inrow update" id="w-ec"><input id="ec" type="number" min="0" max="100" step="any" inputmode="decimal" data-i18n-ph="phPct" placeholder="enter %"><span class="unit" data-i18n="uOfColl">% of collected</span></div>
+          <span class="hint" data-i18n="hEc">Plastic that is collected but still escapes along the way: inadequate containment, open vehicles, overflowing collection points, waste dropped in transport, wind-blown plastics, landfill erosion.</span>
         </div>
       </div>
     </div></section>
 
     <section class="card"><div class="pad">
-      <div class="shead"><span class="step">D</span><h2>Share reaching the ocean</h2><span class="chip r"><i class="dot"></i>Review</span></div>
-      <p class="lede">Proposed defaults from the workshop tool. Check whether they fit your city and
-         replace where relevant.</p>
+      <div class="shead"><span class="step">D</span><h2 data-i18n="secD">Share reaching the ocean</h2><span class="chip r"><i class="dot"></i><span data-i18n="chipReview">Review</span></span></div>
+      <p class="lede" data-i18n="secDlede">Proposed defaults from the workshop tool. Check whether they fit your city and replace where relevant.</p>
       <div class="fgroup">
         <div class="f">
-          <label for="mu">Marine leakage, uncollected stream</label>
-          <div class="inrow review"><select id="mu">
-            <option value="0.15">15% &middot; low</option>
-            <option value="0.25">25% &middot; moderate</option>
-            <option value="0.4" selected>40% &middot; high</option>
-          </select></div>
-          <span class="hint">Select the conversion range based on climate, topography, vegetation and
-            infrastructure that may remove mismanaged waste before it reaches waterways.</span>
+          <label for="mu" data-i18n="fMu">Marine leakage, uncollected stream</label>
+          <div class="inrow review"><select id="mu"></select></div>
+          <span class="hint" data-i18n="hMu">Select the conversion range based on climate, topography, vegetation and infrastructure that may remove mismanaged waste before it reaches waterways.</span>
         </div>
         <div class="f">
-          <label for="mc">Marine leakage, collected stream</label>
-          <div class="inrow review"><input id="mc" type="number" min="0" max="100" step="any" inputmode="decimal"><span class="unit">%</span></div>
-          <span class="hint">Estimate marine leakage from collection and disposal, for example known
-            inefficiencies or a recent material flow analysis.</span>
+          <label for="mc" data-i18n="fMc">Marine leakage, collected stream</label>
+          <div class="inrow review"><select id="mc"></select></div>
+          <span class="hint" data-i18n="hMc">Estimate marine leakage from collection and disposal, for example known inefficiencies or a recent material flow analysis.</span>
         </div>
       </div>
     </div></section>
 
     <section class="card"><div class="pad">
-      <div class="shead"><span class="step">E</span><h2>Projected growth</h2></div>
+      <div class="shead"><span class="step">E</span><h2 data-i18n="secE">Projected growth</h2></div>
       <div class="fgroup">
         <div class="f derived" id="d-growth">
-          <label>Annual population growth<span class="src">WORLD BANK</span></label>
+          <label><span data-i18n="fGrowth">Annual population growth</span><span class="src" data-i18n="worldBank">WORLD BANK</span></label>
           <span class="v num" id="o-growth">&mdash;</span>
         </div>
         <div class="f" id="f-growthin" hidden>
-          <label for="growth">Annual population growth</label>
-          <div class="inrow update"><input id="growth" type="number" step="any" inputmode="decimal"><span class="unit">% / year</span></div>
+          <label for="growth" data-i18n="fGrowth">Annual population growth</label>
+          <div class="inrow update"><input id="growth" type="number" step="any" inputmode="decimal"><span class="unit" data-i18n="uPctYr">% / year</span></div>
         </div>
-        <div class="f derived"><label>Project duration</label><span class="v num">5 years</span></div>
-        <p class="fixednote span2" id="growthnote">Population growth is fixed for the listed cities,
-          taken from World Bank data, and compounds the baseline across the five years of the
-          project. Choose <em>Other city</em> if you need to enter a different rate.</p>
+        <div class="f derived"><label data-i18n="fDuration">Project duration</label><span class="v num" id="o-years">5 years</span></div>
+        <p class="fixednote span2" id="growthnote" data-i18n-html="growthNote">Population growth is fixed for the listed cities, taken from World Bank data, and compounds the baseline across the five years of the project. Choose <em>Other city</em> if you need to enter a different rate.</p>
       </div>
-      <div class="btnrow" style="margin-top:15px"><button class="btn" id="reset">Reset to dataset values</button></div>
+      <div class="btnrow" style="margin-top:15px"><button class="btn" id="reset" data-i18n="btnReset">Reset to dataset values</button></div>
     </div></section>
 
   </div>
@@ -328,14 +321,14 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
       <p class="lede" id="res-sub"></p>
       <div class="tiles">
         <div class="tile hero">
-          <span class="k">Marine plastic, annual</span>
+          <span class="k" data-i18n="tileAnnual">Marine plastic, annual</span>
           <span class="v num" id="r-annual">&mdash;</span>
-          <span class="s">tonnes per year entering the ocean</span>
+          <span class="s" data-i18n="tileAnnualSub">tonnes per year entering the ocean</span>
         </div>
         <div class="tile">
-          <span class="k">Over the project</span>
+          <span class="k" data-i18n="tileProject">Over the project</span>
           <span class="v num" id="r-cum">&mdash;</span>
-          <span class="s" id="r-cum-sub">tonnes, compounded</span>
+          <span class="s" id="r-cum-sub"></span>
         </div>
       </div>
     </section>
@@ -344,29 +337,27 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
 
   <!-- ============ EXPORT: last on every layout ============ -->
   <section class="card exportcard"><div class="pad">
-    <div class="shead"><h2>Send your figures back</h2></div>
-    <p class="lede">Submit your baseline to the network, or copy it and send it yourself.</p>
+    <div class="shead"><h2 data-i18n="secSend">Send your figures back</h2></div>
+    <p class="lede" data-i18n="secSendLede">Submit your baseline to the network, or copy it and send it yourself.</p>
     <div class="fgroup">
       <div class="f span2">
-        <label for="contact">Your name and organisation</label>
+        <label for="contact" data-i18n="fContact">Your name and organisation</label>
         <div class="inrow"><input id="contact" type="text" autocomplete="organization"></div>
       </div>
       <div class="f span2">
-        <label for="notes">Which of your planned interventions do you expect to reduce marine
-          litter, and why?</label>
-        <textarea id="notes" class="notes" aria-label="Planned interventions expected to reduce marine litter"></textarea>
-        <span class="hint">Optional. Anything else the network should know about these figures is
-          welcome here too.</span>
+        <label for="notes" data-i18n="fNotes">Which of your planned interventions do you expect to reduce marine litter, and why?</label>
+        <textarea id="notes" class="notes" data-i18n-aria="fNotes" aria-label="Planned interventions expected to reduce marine litter"></textarea>
+        <span class="hint" data-i18n="hNotes">Optional. Anything else the network should know about these figures is welcome here too.</span>
       </div>
     </div>
     <details class="sumfold">
-      <summary>Review what will be sent</summary>
-      <textarea id="out" readonly aria-label="Results summary to copy"></textarea>
+      <summary data-i18n="reviewSend">Review what will be sent</summary>
+      <textarea id="out" readonly data-i18n-aria="sumAria" aria-label="Results summary to copy"></textarea>
     </details>
     <div class="btnrow" style="margin-top:13px">
-      <button class="btn primary" id="submit">Submit to the network</button>
-      <button class="btn" id="copy">Copy summary</button>
-      <span class="ok" id="copied" hidden>Copied</span>
+      <button class="btn primary" id="submit" data-i18n="btnSubmit">Submit to the network</button>
+      <button class="btn" id="copy" data-i18n="btnCopy">Copy summary</button>
+      <span class="ok" id="copied" data-i18n="copied" hidden>Copied</span>
     </div>
     <p class="status" id="status" hidden></p>
   </div></section>
@@ -375,20 +366,15 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
 </div>
 
 <footer><div class="wrap">
-  <p><b>What this tool is.</b> It reproduces the baseline calculation from the Circular Cities
-     workshop workbook. The baseline is what your city emits to the ocean each year if nothing
-     changes.</p>
-  <p><b>Where the prefilled numbers come from.</b> Population, total waste, plastic waste and
-     collection coverage are from the project dataset for the participating cities. Annual population
-     growth is fixed, taken from World Bank data. The two leakage percentages are deliberately left
-     empty: no dataset can set them for your city.</p>
-  <details class="meth"><summary>Calculation steps</summary>
+  <p><b data-i18n="footA">What this tool is.</b> <span data-i18n="footAbody">It reproduces the baseline calculation from the Circular Cities workshop workbook. The baseline is what your city emits to the ocean each year if nothing changes.</span></p>
+  <p><b data-i18n="footB">Where the prefilled numbers come from.</b> <span data-i18n="footBbody">Population, total waste, plastic waste and collection coverage are from the project dataset for the participating cities. Annual population growth is fixed, taken from World Bank data. The two leakage percentages are deliberately left empty: no dataset can set them for your city.</span></p>
+  <details class="meth"><summary data-i18n="methTitle">Calculation steps</summary>
     <ol>
-      <li>Collected plastic <code>= plastic &times; collection rate</code>; uncollected is the remainder.</li>
-      <li>Marine plastic from the uncollected stream <code>= uncollected &times; emissions% &times; marine%</code>.</li>
-      <li>Marine plastic from the collected stream <code>= collected &times; emissions% &times; marine%</code>.</li>
-      <li>Annual total is the sum of the two streams.</li>
-      <li>Project total compounds the annual figure at the growth rate: <code>annual &times; ((1+g)^n &minus; 1) / g</code>, or <code>annual &times; n</code> when growth is zero.</li>
+      <li data-i18n-html="meth1">Collected plastic <code>= plastic &times; collection rate</code>; uncollected is the remainder.</li>
+      <li data-i18n-html="meth2">Marine plastic from the uncollected stream <code>= uncollected &times; emissions% &times; marine%</code>.</li>
+      <li data-i18n-html="meth3">Marine plastic from the collected stream <code>= collected &times; emissions% &times; marine%</code>.</li>
+      <li data-i18n-html="meth4">Annual total is the sum of the two streams.</li>
+      <li data-i18n-html="meth5">Project total compounds the annual figure at the growth rate: <code>annual &times; ((1+g)^n &minus; 1) / g</code>, or <code>annual &times; n</code> when growth is zero.</li>
     </ol>
   </details>
 </div></footer>
@@ -417,21 +403,260 @@ var CITIES = [
  {n:"Tulum",               c:"Mexico",    pop:46721,            msw:null,             pl:null,             cr:null,               g:0.00826382426690595}
 ];
 
+/* country names shown in the city dropdown */
+var COUNTRY = {
+  en:{Colombia:"Colombia",Argentina:"Argentina",Mexico:"Mexico",Panama:"Panama",Jamaica:"Jamaica",
+      Uruguay:"Uruguay",Chile:"Chile",Ecuador:"Ecuador"},
+  es:{Colombia:"Colombia",Argentina:"Argentina",Mexico:"México",Panama:"Panamá",Jamaica:"Jamaica",
+      Uruguay:"Uruguay",Chile:"Chile",Ecuador:"Ecuador"}
+};
+
 /* the sheet carries only a population and growth rate for some cities */
 function hasData(c){ return !!c && c.pl != null; }
 var OTHER = "__other__";
 var YEARS = 5;   /* project duration, fixed */
 
+/* ---------- language ---------- */
+var STR = {
+en:{
+ langGroup:"Language",
+ eyebrow:"GEF Circular Cities · Intercity Network",
+ title:"Marine plastic baseline",
+ sub:"Estimate marine plastic leakage for your city.",
+ secA:"Your city",
+ secAlede:"Pick your city to load its baseline, or choose <em>Other city</em> to enter your own figures.",
+ fCity:"City", fPop:"Population", fCityName:"City name", fCountry:"Country",
+ uPeople:"people", uTyr:"t / year", uPctYr:"% / year",
+ otherCity:"Other city, enter my own figures", otherShort:"Other city", noDataTag:"(data unavailable)",
+ secB:"Waste and collection", chipConfirm:"Confirm values",
+ secBlede:"Prefilled from the project dataset where available. Replace them with your own figures where you have them.",
+ noData:"The project dataset has no waste figures for this city, so these three are empty. Enter your own.",
+ prefilled:"PREFILLED",
+ fMsw:"Total municipal solid waste",
+ hMsw:"All waste generated in the city each year, across every material, not only plastic.",
+ fPlastic:"Annual plastic waste generated",
+ hPlastic:"The plastic fraction of that total. It cannot exceed it.",
+ fShare:"Plastic share of total waste", ofTotal:"of total waste",
+ fColl:"Collection rate",
+ hColl:"Share of generated waste collected and delivered to a recognised recovery or disposal facility.",
+ secC:"Leakage to the environment", chipFill:"Fill values",
+ secClede:"These two are empty by design. Estimate them from your city's own data.",
+ phPct:"enter %", uOfUncoll:"% of uncollected", uOfColl:"% of collected",
+ fEu:"Plastic emissions from uncollected waste",
+ hEu:"Plastic that is never collected and escapes into the environment: open dumping on land and into drains, waste left at unmanaged sites, material washed away by rain, plastic discarded straight into waterways. The rest is burned or buried.",
+ fEc:"Plastic emissions from collected waste",
+ hEc:"Plastic that is collected but still escapes along the way: inadequate containment, open vehicles, overflowing collection points, waste dropped in transport, wind-blown plastics, landfill erosion.",
+ secD:"Share reaching the ocean", chipReview:"Review",
+ secDlede:"Proposed defaults from the workshop tool. Check whether they fit your city and replace where relevant.",
+ fMu:"Marine leakage, uncollected stream",
+ muLow:"low", muMod:"moderate", muHigh:"high",
+ hMu:"Select the conversion range based on climate, topography, vegetation and infrastructure that may remove mismanaged waste before it reaches waterways.",
+ fMc:"Marine leakage, collected stream",
+ hMc:"Estimate marine leakage from collection and disposal, for example known inefficiencies or a recent material flow analysis.",
+ secE:"Projected growth", fGrowth:"Annual population growth", worldBank:"WORLD BANK",
+ fDuration:"Project duration", years5:"5 years",
+ growthNote:"Population growth is fixed for the listed cities, taken from World Bank data, and compounds the baseline across the five years of the project. Choose <em>Other city</em> if you need to enter a different rate.",
+ btnReset:"Reset to dataset values",
+ resTitle:"{city}: marine plastic baseline", yourCity:"Your city",
+ resSub:"Of {plastic} t of plastic waste generated each year, {annual} t reaches the ocean, which is {share} of what the city generates.",
+ resSubWait:"Complete section C to calculate the baseline.",
+ tileAnnual:"Marine plastic, annual", tileAnnualSub:"tonnes per year entering the ocean",
+ tileProject:"Over the project", tileProjectSub:"tonnes over {n} years at {g} growth",
+ todoNeeds:"The baseline needs {items}. Enter your city's estimate in section C.",
+ todoEu:"emissions from uncollected waste", todoEc:"emissions from collected waste", andWord:"and",
+ secSend:"Send your figures back",
+ secSendLede:"Submit your baseline to the network, or copy it and send it yourself.",
+ fContact:"Your name and organisation",
+ fNotes:"Which of your planned interventions do you expect to reduce marine litter, and why?",
+ hNotes:"Optional. Anything else the network should know about these figures is welcome here too.",
+ reviewSend:"Review what will be sent", sumAria:"Results summary to copy",
+ btnSubmit:"Submit to the network", btnCopy:"Copy summary", copied:"Copied", submitted:"Submitted",
+ stNeedPct:"Fill in both leakage percentages before submitting.",
+ stNeedCity:"Enter your city name first.",
+ stSending:"Sending…",
+ stOk:"Submitted for {city}. Thank you.",
+ stFail:"Could not reach the network from here. Use Copy summary and email it instead.",
+ stPreview:"Submitting is active on the published site. Here, use Copy summary.",
+ sumWait:"Complete the two leakage percentages in section C to produce a summary.",
+ sumTitle:"MARINE PLASTIC BASELINE", sumCity:"City", sumBy:"Submitted by", sumDate:"Date",
+ sumNotGiven:"not given", sumInputs:"INPUTS", sumBaseline:"BASELINE", sumNotes:"NOTES FROM THE CITY",
+ sMsw:"Total municipal solid waste", sPlastic:"Annual plastic waste generated",
+ sShare:"Plastic share of total waste", sColl:"Collection rate",
+ sEu:"Emissions from uncollected waste", sEc:"Emissions from collected waste",
+ sMu:"Marine leakage, uncollected", sMc:"Marine leakage, collected",
+ sGrowth:"Population growth (World Bank)", sYears:"Project duration",
+ sCollected:"Collected plastic", sUncollected:"Uncollected plastic",
+ sMarU:"Marine plastic, uncollected", sMarC:"Marine plastic, collected",
+ sAnnual:"MARINE PLASTIC, ANNUAL", sCum:"MARINE PLASTIC, {n}-YEAR TOTAL",
+ uTy:"t/year", uT:"t", uYears:"years", uOfUncollShort:"of uncollected", uOfCollShort:"of collected",
+ footA:"What this tool is.",
+ footAbody:"It reproduces the baseline calculation from the Circular Cities workshop workbook. The baseline is what your city emits to the ocean each year if nothing changes.",
+ footB:"Where the prefilled numbers come from.",
+ footBbody:"Population, total waste, plastic waste and collection coverage are from the project dataset for the participating cities. Annual population growth is fixed, taken from World Bank data. The two leakage percentages are deliberately left empty: no dataset can set them for your city.",
+ methTitle:"Calculation steps",
+ meth1:"Collected plastic <code>= plastic &times; collection rate</code>; uncollected is the remainder.",
+ meth2:"Marine plastic from the uncollected stream <code>= uncollected &times; emissions% &times; marine%</code>.",
+ meth3:"Marine plastic from the collected stream <code>= collected &times; emissions% &times; marine%</code>.",
+ meth4:"Annual total is the sum of the two streams.",
+ meth5:"Project total compounds the annual figure at the growth rate: <code>annual &times; ((1+g)^n &minus; 1) / g</code>, or <code>annual &times; n</code> when growth is zero."
+},
+es:{
+ langGroup:"Idioma",
+ eyebrow:"GEF Circular Cities · Red Interurbana",
+ title:"Línea base de plásticos marinos",
+ sub:"Estime la fuga de plásticos marinos de su ciudad.",
+ secA:"Su ciudad",
+ secAlede:"Elija su ciudad para cargar su línea base, o seleccione <em>Otra ciudad</em> para introducir sus propias cifras.",
+ fCity:"Ciudad", fPop:"Población", fCityName:"Nombre de la ciudad", fCountry:"País",
+ uPeople:"habitantes", uTyr:"t / año", uPctYr:"% / año",
+ otherCity:"Otra ciudad, introducir mis propias cifras", otherShort:"Otra ciudad", noDataTag:"(datos no disponibles)",
+ secB:"Residuos y recolección", chipConfirm:"Confirme los valores",
+ secBlede:"Precargados con los datos del proyecto cuando están disponibles. Sustitúyalos por sus propias cifras cuando las tenga.",
+ noData:"Los datos del proyecto no incluyen cifras de residuos para esta ciudad, por lo que estos tres campos están vacíos. Introduzca los suyos.",
+ prefilled:"PRECARGADO",
+ fMsw:"Residuos sólidos urbanos totales",
+ hMsw:"Todos los residuos generados en la ciudad cada año, de todos los materiales, no solo plástico.",
+ fPlastic:"Residuos plásticos generados al año",
+ hPlastic:"La fracción plástica de ese total. No puede superarlo.",
+ fShare:"Proporción de plástico sobre el total", ofTotal:"del total de residuos",
+ fColl:"Tasa de recolección",
+ hColl:"Proporción de los residuos generados que se recolectan y se entregan a una instalación reconocida de recuperación o disposición final.",
+ secC:"Fuga al medio ambiente", chipFill:"Complete los valores",
+ secClede:"Estos dos campos están vacíos intencionadamente. Estímelos con los datos de su ciudad.",
+ phPct:"introduzca %", uOfUncoll:"% de no recolectado", uOfColl:"% de recolectado",
+ fEu:"Emisiones de plástico de residuos no recolectados",
+ hEu:"Plástico que nunca se recolecta y escapa al medio ambiente: vertido a cielo abierto en el suelo y en desagües, residuos abandonados en sitios no gestionados, material arrastrado por la lluvia, plástico arrojado directamente a los cursos de agua. El resto se quema o se entierra.",
+ fEc:"Emisiones de plástico de residuos recolectados",
+ hEc:"Plástico que se recolecta pero aún así se escapa por el camino: contención inadecuada, vehículos abiertos, puntos de recolección desbordados, residuos caídos durante el transporte, plásticos arrastrados por el viento, erosión del vertedero.",
+ secD:"Proporción que llega al océano", chipReview:"Revise",
+ secDlede:"Valores propuestos por la herramienta del taller. Compruebe si se ajustan a su ciudad y sustitúyalos cuando corresponda.",
+ fMu:"Fuga marina, flujo no recolectado",
+ muLow:"baja", muMod:"moderada", muHigh:"alta",
+ hMu:"Seleccione el rango de conversión según el clima, la topografía, la vegetación y la infraestructura que puedan retener los residuos mal gestionados antes de que lleguen a los cursos de agua.",
+ fMc:"Fuga marina, flujo recolectado",
+ hMc:"Estime la fuga marina de la recolección y la disposición final, por ejemplo a partir de deficiencias conocidas o de un análisis de flujo de materiales reciente.",
+ secE:"Crecimiento proyectado", fGrowth:"Crecimiento anual de la población", worldBank:"BANCO MUNDIAL",
+ fDuration:"Duración del proyecto", years5:"5 años",
+ growthNote:"El crecimiento de la población es fijo para las ciudades de la lista, procede de datos del Banco Mundial y compone la línea base a lo largo de los cinco años del proyecto. Elija <em>Otra ciudad</em> si necesita introducir otra tasa.",
+ btnReset:"Restablecer los valores originales",
+ resTitle:"{city}: línea base de plásticos marinos", yourCity:"Su ciudad",
+ resSub:"De {plastic} t de residuos plásticos generados cada año, {annual} t llegan al océano, lo que equivale al {share} de lo que genera la ciudad.",
+ resSubWait:"Complete la sección C para calcular la línea base.",
+ tileAnnual:"Plásticos marinos, anual", tileAnnualSub:"toneladas al año que entran al océano",
+ tileProject:"Durante el proyecto", tileProjectSub:"toneladas en {n} años con un crecimiento del {g}",
+ todoNeeds:"La línea base necesita {items}. Introduzca la estimación de su ciudad en la sección C.",
+ todoEu:"las emisiones de residuos no recolectados", todoEc:"las emisiones de residuos recolectados", andWord:"y",
+ secSend:"Envíe sus cifras",
+ secSendLede:"Envíe su línea base a la red, o cópiela y envíela usted mismo.",
+ fContact:"Su nombre y organización",
+ fNotes:"¿Cuáles de sus intervenciones previstas espera que reduzcan la basura marina, y por qué?",
+ hNotes:"Opcional. También puede indicar aquí cualquier otra cosa que la red deba saber sobre estas cifras.",
+ reviewSend:"Revisar lo que se enviará", sumAria:"Resumen de resultados para copiar",
+ btnSubmit:"Enviar a la red", btnCopy:"Copiar resumen", copied:"Copiado", submitted:"Enviado",
+ stNeedPct:"Complete los dos porcentajes de fuga antes de enviar.",
+ stNeedCity:"Introduzca primero el nombre de su ciudad.",
+ stSending:"Enviando…",
+ stOk:"Enviado para {city}. Gracias.",
+ stFail:"No se pudo conectar con la red desde aquí. Use Copiar resumen y envíelo por correo.",
+ stPreview:"El envío está activo en el sitio publicado. Aquí, use Copiar resumen.",
+ sumWait:"Complete los dos porcentajes de fuga de la sección C para generar un resumen.",
+ sumTitle:"LÍNEA BASE DE PLÁSTICOS MARINOS", sumCity:"Ciudad", sumBy:"Enviado por", sumDate:"Fecha",
+ sumNotGiven:"sin indicar", sumInputs:"DATOS INTRODUCIDOS", sumBaseline:"LÍNEA BASE", sumNotes:"NOTAS DE LA CIUDAD",
+ sMsw:"Residuos sólidos urbanos totales", sPlastic:"Residuos plásticos al año",
+ sShare:"Proporción de plástico", sColl:"Tasa de recolección",
+ sEu:"Emisiones de no recolectados", sEc:"Emisiones de recolectados",
+ sMu:"Fuga marina, no recolectado", sMc:"Fuga marina, recolectado",
+ sGrowth:"Crecimiento (Banco Mundial)", sYears:"Duración del proyecto",
+ sCollected:"Plástico recolectado", sUncollected:"Plástico no recolectado",
+ sMarU:"Plástico marino, no recolectado", sMarC:"Plástico marino, recolectado",
+ sAnnual:"PLÁSTICO MARINO, ANUAL", sCum:"PLÁSTICO MARINO, TOTAL {n} AÑOS",
+ uTy:"t/año", uT:"t", uYears:"años", uOfUncollShort:"de no recolectado", uOfCollShort:"de recolectado",
+ footA:"Qué es esta herramienta.",
+ footAbody:"Reproduce el cálculo de la línea base del libro de trabajo del taller de Ciudades Circulares. La línea base es lo que su ciudad emite al océano cada año si nada cambia.",
+ footB:"De dónde salen las cifras precargadas.",
+ footBbody:"La población, los residuos totales, los residuos plásticos y la cobertura de recolección proceden de los datos del proyecto para las ciudades participantes. El crecimiento anual de la población es fijo y procede del Banco Mundial. Los dos porcentajes de fuga se dejan vacíos a propósito: ningún conjunto de datos puede fijarlos por su ciudad.",
+ methTitle:"Pasos del cálculo",
+ meth1:"Plástico recolectado <code>= plástico &times; tasa de recolección</code>; el resto es no recolectado.",
+ meth2:"Plástico marino del flujo no recolectado <code>= no recolectado &times; emisiones% &times; marina%</code>.",
+ meth3:"Plástico marino del flujo recolectado <code>= recolectado &times; emisiones% &times; marina%</code>.",
+ meth4:"El total anual es la suma de los dos flujos.",
+ meth5:"El total del proyecto compone la cifra anual a la tasa de crecimiento: <code>anual &times; ((1+g)^n &minus; 1) / g</code>, o <code>anual &times; n</code> cuando el crecimiento es cero."
+}};
+
+var LOCALE = {en:"en-GB", es:"es-ES"};
+var LANG = "en";
+
+function T(k, vars){
+  var s = (STR[LANG] && STR[LANG][k]) || STR.en[k] || k;
+  if(vars) for(var p in vars) s = s.split("{"+p+"}").join(vars[p]);
+  return s;
+}
+
 /* ---------- helpers ---------- */
 var $ = function(id){ return document.getElementById(id); };
-function t(v, d){ if(!isFinite(v)) return "—";
+function fmt(v, d){ if(!isFinite(v)) return "—";
   var dd = d === undefined ? (Math.abs(v) >= 1000 ? 0 : 1) : d;
-  return v.toLocaleString("en-GB",{minimumFractionDigits:dd, maximumFractionDigits:dd}); }
-function pct(v, d){ return !isFinite(v) ? "—" : (v*100).toLocaleString("en-GB",{minimumFractionDigits:d===undefined?1:d, maximumFractionDigits:d===undefined?1:d}) + "%"; }
+  return v.toLocaleString(LOCALE[LANG],{minimumFractionDigits:dd, maximumFractionDigits:dd}); }
+function pct(v, d){ if(!isFinite(v)) return "—";
+  var dd = d === undefined ? 1 : d;
+  return (v*100).toLocaleString(LOCALE[LANG],{minimumFractionDigits:dd, maximumFractionDigits:dd}) + "%"; }
 function num(id){ var v = parseFloat($(id).value); return isFinite(v) ? v : NaN; }
 
 /* ---------- state ---------- */
 function current(){ var v = $("city").value; return v === OTHER ? null : CITIES[+v]; }
+function cityName(c){ return c ? c.n : ($("cityname").value.trim() || T("otherShort")); }
+
+/* the plastic fraction can never be larger than the total it comes from */
+function capPlastic(){
+  var p = parseFloat($("plastic").value), m = parseFloat($("msw").value);
+  if(isFinite(p) && isFinite(m) && p > m){ $("plastic").value = m; return true; }
+  return false;
+}
+
+function buildSelects(){
+  var keep = {mu:$("mu").value, mc:$("mc").value, city:$("city").value};
+  $("city").innerHTML = CITIES.map(function(c,i){
+      return '<option value="'+i+'">' + c.n + ", " + (COUNTRY[LANG][c.c] || c.c)
+           + (hasData(c) ? "" : " " + T("noDataTag")) + '</option>'; }).join("")
+    + '<option value="'+OTHER+'">' + T("otherCity") + '</option>';
+  $("city").value = keep.city || "0";
+
+  $("mu").innerHTML =
+      '<option value="0.15">15% · ' + T("muLow")  + '</option>'
+    + '<option value="0.25">25% · ' + T("muMod")  + '</option>'
+    + '<option value="0.4">40% · '  + T("muHigh") + '</option>';
+  $("mu").value = keep.mu || "0.4";
+
+  /* collected-stream leakage: 5 to 30 in fives, the top step open-ended */
+  $("mc").innerHTML = [0.05,0.10,0.15,0.20,0.25,0.30].map(function(v){
+    return '<option value="'+v+'">' + Math.round(v*100) + "%" + (v === 0.30 ? "+" : "") + '</option>';
+  }).join("");
+  $("mc").value = keep.mc || "0.1";
+}
+
+function applyLang(){
+  document.documentElement.lang = LANG;
+  [].forEach.call(document.querySelectorAll("[data-i18n]"), function(el){
+    el.textContent = T(el.getAttribute("data-i18n")); });
+  [].forEach.call(document.querySelectorAll("[data-i18n-html]"), function(el){
+    el.innerHTML = T(el.getAttribute("data-i18n-html")); });
+  [].forEach.call(document.querySelectorAll("[data-i18n-ph]"), function(el){
+    el.placeholder = T(el.getAttribute("data-i18n-ph")); });
+  [].forEach.call(document.querySelectorAll("[data-i18n-aria]"), function(el){
+    el.setAttribute("aria-label", T(el.getAttribute("data-i18n-aria"))); });
+  [].forEach.call($("langsel").children, function(b){
+    b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === LANG)); });
+  $("o-years").textContent = T("years5");
+  buildSelects();
+  render();
+}
+
+function setLang(l){
+  if(l !== "en" && l !== "es") return;
+  LANG = l;
+  try{ localStorage.setItem("mpb-lang", l); }catch(e){}
+  applyLang();
+}
 
 function load(){
   var c = current();
@@ -448,7 +673,7 @@ function load(){
     $("coll").value = ""; $("growth").value = "";
   }
   $("eu").value = ""; $("ec").value = "";
-  $("mu").value = "0.4"; $("mc").value = 29;
+  $("mu").value = "0.4"; $("mc").value = "0.1";
   render();
 }
 
@@ -461,14 +686,16 @@ function frac(id){
 
 function model(over){
   over = over || {};
+  var msw     = num("msw");
   var plastic = over.plastic !== undefined ? over.plastic : num("plastic");
   if(isFinite(plastic)) plastic = Math.max(0, plastic);
-  var msw     = num("msw");
+  /* the plastic fraction cannot exceed the total waste it is drawn from */
+  if(isFinite(plastic) && isFinite(msw)) plastic = Math.min(plastic, Math.max(0, msw));
   var cr      = over.cr !== undefined ? Math.min(1, Math.max(0, over.cr/100)) : frac("coll");
   var eu      = over.eu !== undefined ? Math.min(1, Math.max(0, over.eu/100)) : frac("eu");
   var ec      = over.ec !== undefined ? Math.min(1, Math.max(0, over.ec/100)) : frac("ec");
   var mu      = parseFloat($("mu").value);
-  var mc      = frac("mc");
+  var mc      = parseFloat($("mc").value);
   var g       = num("growth") / 100;
   var yrs     = YEARS;
 
@@ -482,17 +709,15 @@ function model(over){
 
   return {plastic:plastic, msw:msw, share:plastic/msw, cr:cr, collected:collected,
     uncollected:uncollected, eu:eu, ec:ec, mu:mu, mc:mc, escU:escU, escC:escC,
-    marU:marU, marC:marC, annual:annual, g:g, yrs:yrs, cum:cum,
-    retC:collected - escC, retU:uncollected - escU,
-    landU:escU - marU, landC:escC - marC};
+    marU:marU, marC:marC, annual:annual, g:g, yrs:yrs, cum:cum};
 }
 
 /* ---------- render ---------- */
 function render(){
   var c = current(), m = model();
-  $("o-pop").textContent  = c ? t(c.pop,0) : "—";
-  $("o-share").textContent = isFinite(m.share) ? pct(m.share,1) + " of total waste" : "—";
-  $("o-growth").textContent = isFinite(m.g) ? pct(m.g,2) + " / year" : "—";
+  $("o-pop").textContent    = c ? fmt(c.pop,0) : "—";
+  $("o-share").textContent  = isFinite(m.share) ? pct(m.share,1) + " " + T("ofTotal") : "—";
+  $("o-growth").textContent = isFinite(m.g) ? pct(m.g,2) + " / " + (LANG === "es" ? "año" : "year") : "—";
   $("f-popin").hidden = !!c;     $("d-pop").hidden = !c;
   $("f-growthin").hidden = !!c;  $("d-growth").hidden = !c;
   $("growthnote").hidden = !c;
@@ -503,27 +728,25 @@ function render(){
   $("pre-coll").hidden    = !c || c.cr  == null;
 
   var missing = [];
-  if(!isFinite(m.eu)) missing.push("emissions from uncollected waste");
-  if(!isFinite(m.ec)) missing.push("emissions from collected waste");
+  if(!isFinite(m.eu)) missing.push(T("todoEu"));
+  if(!isFinite(m.ec)) missing.push(T("todoEc"));
   $("w-eu").classList.toggle("empty", !isFinite(m.eu));
   $("w-ec").classList.toggle("empty", !isFinite(m.ec));
-  var todo = $("todo");
   if(missing.length){
-    todo.hidden = false;
-    $("todo-txt").innerHTML = "The baseline needs <b>" + missing.join("</b> and <b>") +
-      "</b>. Enter your city's estimate in section C, or start from the dataset proxy where one is offered.";
-  } else { todo.hidden = true; }
+    $("todo").hidden = false;
+    $("todo-txt").innerHTML = T("todoNeeds",
+      {items:"<b>" + missing.join("</b> " + T("andWord") + " <b>") + "</b>"});
+  } else { $("todo").hidden = true; }
 
   var ready = isFinite(m.annual);
-  $("res-title").textContent = (c ? c.n : "Your city") + ": marine plastic baseline";
+  $("res-title").textContent = T("resTitle", {city: c ? c.n : T("yourCity")});
   $("res-sub").textContent = ready
-    ? "Of " + t(m.plastic) + " t of plastic waste generated each year, " + t(m.annual) +
-      " t reaches the ocean, which is " + pct(m.annual/m.plastic, 2) + " of what the city generates."
-    : "Complete section C to calculate the baseline.";
+    ? T("resSub", {plastic:fmt(m.plastic), annual:fmt(m.annual), share:pct(m.annual/m.plastic, 2)})
+    : T("resSubWait");
 
-  $("r-annual").textContent = ready ? t(m.annual) : "—";
-  $("r-cum").textContent    = ready ? t(m.cum) : "—";
-  $("r-cum-sub").textContent = "tonnes over " + m.yrs + " years at " + pct(m.g,2) + " growth";
+  $("r-annual").textContent  = ready ? fmt(m.annual) : "—";
+  $("r-cum").textContent     = ready ? fmt(m.cum) : "—";
+  $("r-cum-sub").textContent = T("tileProjectSub", {n:m.yrs, g:pct(m.g,2)});
 
   $("out").value = summary(c, m, ready);
   refreshSubmit();
@@ -531,42 +754,46 @@ function render(){
 
 /* ---------- export ---------- */
 function summary(c, m, ready){
-  if(!ready) return "Complete the two leakage percentages in section C to produce a summary.";
+  if(!ready) return T("sumWait");
   var L = [];
-  L.push("MARINE PLASTIC BASELINE");
-  L.push("City: " + cityName(c) + (c ? " (" + c.c + ")" : ($("country").value.trim() ? " (" + $("country").value.trim() + ")" : "")));
-  L.push("Submitted by: " + ($("contact").value.trim() || "not given"));
-  L.push("Date: " + new Date().toISOString().slice(0,10));
+  function row(label, value){
+    var s = label + " ";
+    while(s.length < 36) s += ".";
+    return "  " + s + " " + value;
+  }
+  var country = c ? (COUNTRY[LANG][c.c] || c.c) : $("country").value.trim();
+  L.push(T("sumTitle"));
+  L.push(T("sumCity") + ": " + cityName(c) + (country ? " (" + country + ")" : ""));
+  L.push(T("sumBy") + ": " + ($("contact").value.trim() || T("sumNotGiven")));
+  L.push(T("sumDate") + ": " + new Date().toISOString().slice(0,10));
   L.push("");
-  L.push("INPUTS");
-  L.push("  Total municipal solid waste ....... " + t(m.msw,0) + " t/year");
-  L.push("  Annual plastic waste generated .... " + t(m.plastic) + " t/year");
-  L.push("  Plastic share of total waste ...... " + pct(m.share,1));
-  L.push("  Collection rate ................... " + pct(m.cr,2));
-  L.push("  Emissions from uncollected waste .. " + pct(m.eu,1) + " of uncollected");
-  L.push("  Emissions from collected waste .... " + pct(m.ec,2) + " of collected");
-  L.push("  Marine leakage, uncollected ....... " + pct(m.mu,0));
-  L.push("  Marine leakage, collected ......... " + pct(m.mc,1));
-  L.push("  Population growth (World Bank) .... " + pct(m.g,2) + " / year");
-  L.push("  Project duration .................. " + m.yrs + " years");
+  L.push(T("sumInputs"));
+  L.push(row(T("sMsw"),     fmt(m.msw,0) + " " + T("uTy")));
+  L.push(row(T("sPlastic"), fmt(m.plastic) + " " + T("uTy")));
+  L.push(row(T("sShare"),   pct(m.share,1)));
+  L.push(row(T("sColl"),    pct(m.cr,2)));
+  L.push(row(T("sEu"),      pct(m.eu,1) + " " + T("uOfUncollShort")));
+  L.push(row(T("sEc"),      pct(m.ec,2) + " " + T("uOfCollShort")));
+  L.push(row(T("sMu"),      pct(m.mu,0)));
+  L.push(row(T("sMc"),      pct(m.mc,0)));
+  L.push(row(T("sGrowth"),  pct(m.g,2)));
+  L.push(row(T("sYears"),   m.yrs + " " + T("uYears")));
   L.push("");
-  L.push("BASELINE");
-  L.push("  Collected plastic ................. " + t(m.collected) + " t/year");
-  L.push("  Uncollected plastic ............... " + t(m.uncollected) + " t/year");
-  L.push("  Marine plastic, uncollected ....... " + t(m.marU) + " t/year");
-  L.push("  Marine plastic, collected ......... " + t(m.marC) + " t/year");
-  L.push("  MARINE PLASTIC, ANNUAL ............ " + t(m.annual) + " t/year");
-  L.push("  MARINE PLASTIC, " + m.yrs + "-YEAR TOTAL ...... " + t(m.cum) + " t");
+  L.push(T("sumBaseline"));
+  L.push(row(T("sCollected"),   fmt(m.collected) + " " + T("uTy")));
+  L.push(row(T("sUncollected"), fmt(m.uncollected) + " " + T("uTy")));
+  L.push(row(T("sMarU"),        fmt(m.marU) + " " + T("uTy")));
+  L.push(row(T("sMarC"),        fmt(m.marC) + " " + T("uTy")));
+  L.push(row(T("sAnnual"),      fmt(m.annual) + " " + T("uTy")));
+  L.push(row(T("sCum",{n:m.yrs}), fmt(m.cum) + " " + T("uT")));
   var nt = $("notes").value.trim();
-  if(nt){ L.push(""); L.push("NOTES FROM THE CITY"); L.push("  " + nt.replace(/\n/g, "\n  ")); }
+  if(nt){ L.push(""); L.push(T("sumNotes")); L.push("  " + nt.replace(/\n/g, "\n  ")); }
   return L.join("\n");
 }
 
 /* ---------- submission ---------- */
 /* Apps Script web app URL, ending in /exec. Empty hides the Submit button. */
 var ENDPOINT = "https://script.google.com/macros/s/AKfycbywVhBLXK472mEHkgcg03QJ60wfG6KN5KAMuf1wV1Q2CVf1QenRRCaWFn1xxS3CvCuPfQ/exec";
-
-function cityName(c){ return c ? c.n : ($("cityname").value.trim() || "Other city"); }
 
 function payload(c, m){
   var r3 = function(v){ return isFinite(v) ? +v.toFixed(3) : ""; };
@@ -594,11 +821,12 @@ function setStatus(msg, kind){
 
 /* any edit after a send makes the old outcome stale, so allow another one */
 function refreshSubmit(){
-  if(stickyStatus || submitState === "sending") return;
+  if(submitState === "sending") return;
+  if(stickyStatus){ setStatus(T("stPreview")); return; }
   if(submitState === "done"){
     submitState = "idle";
     $("submit").disabled = false;
-    $("submit").textContent = "Submit to the network";
+    $("submit").textContent = T("btnSubmit");
   }
   setStatus("");
 }
@@ -609,14 +837,14 @@ function wireSubmit(){
   /* the artifact viewer blocks outbound posts; the published site does not */
   if(/claude\.ai$/.test(location.hostname)){
     btn.disabled = true; stickyStatus = true;
-    setStatus("Submitting is active on the published site. Here, use Copy summary.");
+    setStatus(T("stPreview"));
     return;
   }
   btn.addEventListener("click", function(){
     var c = current(), m = model();
-    if(!isFinite(m.annual)){ setStatus("Fill in both leakage percentages before submitting.", "bad"); return; }
-    if(!c && !$("cityname").value.trim()){ setStatus("Enter your city name first.", "bad"); $("cityname").focus(); return; }
-    btn.disabled = true; submitState = "sending"; setStatus("Sending…");
+    if(!isFinite(m.annual)){ setStatus(T("stNeedPct"), "bad"); return; }
+    if(!c && !$("cityname").value.trim()){ setStatus(T("stNeedCity"), "bad"); $("cityname").focus(); return; }
+    btn.disabled = true; submitState = "sending"; setStatus(T("stSending"));
     fetch(ENDPOINT, {
       method: "POST",
       /* text/plain keeps this a simple request, so there is no CORS preflight */
@@ -626,39 +854,46 @@ function wireSubmit(){
       .then(function(j){
         if(!j || !j.ok) throw new Error(j && j.error ? j.error : "rejected");
         submitState = "done";
-        btn.textContent = "Submitted";
-        setStatus("Submitted for " + cityName(c) + ". Thank you.", "good");
+        btn.textContent = T("submitted");
+        setStatus(T("stOk", {city:cityName(c)}), "good");
       })
       .catch(function(){
         submitState = "idle";
         btn.disabled = false;
-        setStatus("Could not reach the network from here. Use Copy summary and email it instead.", "bad");
+        setStatus(T("stFail"), "bad");
       });
   });
 }
 
 /* ---------- wiring ---------- */
 (function init(){
-  var sel = $("city");
-  sel.innerHTML = CITIES.map(function(c,i){
-      return '<option value="'+i+'">' + c.n + ", " + c.c
-           + (hasData(c) ? "" : " (data unavailable)") + '</option>'; }).join("")
-    + '<option value="'+OTHER+'">Other city, enter my own figures</option>';
-  sel.value = "0";
+  try{
+    var saved = localStorage.getItem("mpb-lang");
+    if(saved === "en" || saved === "es") LANG = saved;
+    else if(/^es\b/i.test(navigator.language || "")) LANG = "es";
+  }catch(e){}
 
-  sel.addEventListener("change", load);
-  ["plastic","coll","eu","ec","mc","growth","msw","pop",
+  buildSelects();
+  $("city").value = "0";
+
+  $("city").addEventListener("change", load);
+  ["plastic","coll","eu","ec","growth","msw","pop",
    "cityname","country","contact","notes"].forEach(function(id){
     $(id).addEventListener("input", render);
   });
   /* hold the typed percentages inside 0..100 once the field is left */
-  ["coll","eu","ec","mc"].forEach(function(id){
+  ["coll","eu","ec"].forEach(function(id){
     $(id).addEventListener("change", function(){
       var v = parseFloat(this.value);
       if(isFinite(v) && (v > 100 || v < 0)){ this.value = Math.min(100, Math.max(0, v)); render(); }
     });
   });
+  /* and keep plastic at or below total waste, whichever of the two was edited */
+  ["plastic","msw"].forEach(function(id){
+    $(id).addEventListener("change", function(){ if(capPlastic()) render(); });
+  });
   $("mu").addEventListener("change", render);
+  $("mc").addEventListener("change", render);
   $("reset").addEventListener("click", load);
   $("copy").addEventListener("click", function(){
     var ta = $("out"), done = function(){ var o = $("copied"); o.hidden = false; setTimeout(function(){ o.hidden = true; }, 1800); };
@@ -666,7 +901,11 @@ function wireSubmit(){
       navigator.clipboard.writeText(ta.value).then(done, function(){ ta.select(); done(); });
     }catch(e){ ta.select(); done(); }
   });
+  [].forEach.call($("langsel").children, function(b){
+    b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); });
+  });
   wireSubmit();
+  applyLang();
   load();
 })();
 </script>
