@@ -25,6 +25,7 @@ html,body{margin:0}
   --ff-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
   --ff-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
   --r:10px; --shadow:0 1px 2px rgba(13,26,19,.06),0 6px 20px rgba(13,26,19,.05);
+  --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0e1411; --surface:#161e19; --surface-2:#1d2721; --surface-3:#26322b;
@@ -95,6 +96,7 @@ h1,h2,h3,h4{font-family:var(--ff-display);margin:0;text-wrap:balance;letter-spac
 .shead h2{font-size:17px;font-weight:600}
 .step{font-family:var(--ff-mono);font-size:11px;font-weight:600;color:var(--brand);border:1px solid var(--line-2);border-radius:5px;padding:1px 6px;letter-spacing:.04em}
 .lede{color:var(--ink-2);font-size:13.5px;margin:2px 0 14px}
+.qual{font-family:var(--ff-body);font-size:14px;font-weight:500;color:var(--ink);letter-spacing:0}
 
 /* chips */
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;border-radius:5px;padding:3px 8px;font-family:var(--ff-body)}
@@ -124,6 +126,13 @@ h1,h2,h3,h4{font-family:var(--ff-display);margin:0;text-wrap:balance;letter-spac
 .inrow.review .unit{background:transparent;border-left-color:var(--edge-review)}
 .inrow.empty{box-shadow:inset 0 0 0 1px var(--edge-update)}
 select{appearance:none;cursor:pointer}
+/* a caret so the select reads as a dropdown; masked so it follows the theme colour */
+.inrow.sel{position:relative}
+.inrow.sel select{padding-right:36px}
+.inrow.sel::after{content:"";position:absolute;right:13px;top:50%;width:11px;height:7px;
+  transform:translateY(-50%);pointer-events:none;background:currentColor;opacity:.6;
+  -webkit-mask:var(--caret) center/contain no-repeat;mask:var(--caret) center/contain no-repeat}
+.inrow.sel.review::after{color:var(--chip-review);opacity:.85}
 .f.derived{background:var(--surface-2);border-radius:8px;padding:10px 12px;gap:2px}
 .f.derived label{font-size:12.5px;font-weight:500;color:var(--ink-2)}
 .f.derived .v{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-size:16px;font-weight:600}
@@ -213,7 +222,7 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
       <div class="fgroup">
         <div class="f span2">
           <label for="city" data-i18n="fCity">City</label>
-          <div class="inrow"><select id="city"></select></div>
+          <div class="inrow sel"><select id="city"></select></div>
         </div>
         <div class="f derived span2" id="d-pop"><label data-i18n="fPop">Population</label><span class="v num" id="o-pop">&mdash;</span></div>
         <div class="f" id="f-cityname" hidden>
@@ -256,16 +265,16 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
     </div></section>
 
     <section class="card"><div class="pad">
-      <div class="shead"><span class="step">C</span><h2 data-i18n="secC">Leakage to the environment</h2><span class="chip u"><i class="dot"></i><span data-i18n="chipFill">Fill values</span></span></div>
-      <p class="lede" data-i18n="secClede">These two are empty by design. Estimate them from your city's own data.</p>
+      <div class="shead"><span class="step">C</span><h2 data-i18n="secC">Leakage to the environment</h2><span class="chip u"><i class="dot"></i><span data-i18n="chipConfirm">Confirm values</span></span></div>
+      <p class="lede" data-i18n="secClede">Calculated from the project dataset. Replace them with your own figures where you have them.</p>
       <div class="fgroup">
         <div class="f">
-          <label for="eu" data-i18n="fEu">Plastic emissions from uncollected waste</label>
+          <label for="eu"><span data-i18n="fEu">Plastic emissions from uncollected waste</span><span class="pre" id="pre-eu" data-i18n="prefilled">PREFILLED</span></label>
           <div class="inrow update" id="w-eu"><input id="eu" type="number" min="0" max="100" step="any" inputmode="decimal" data-i18n-ph="phPct" placeholder="enter %"><span class="unit" data-i18n="uOfUncoll">% of uncollected</span></div>
           <span class="hint" data-i18n="hEu">Plastic that is never collected and escapes into the environment: open dumping on land and into drains, waste left at unmanaged sites, material washed away by rain, plastic discarded straight into waterways. The rest is burned or buried.</span>
         </div>
         <div class="f">
-          <label for="ec" data-i18n="fEc">Plastic emissions from collected waste</label>
+          <label for="ec"><span data-i18n="fEc">Plastic emissions from collected waste</span><span class="pre" id="pre-ec" data-i18n="prefilled">PREFILLED</span></label>
           <div class="inrow update" id="w-ec"><input id="ec" type="number" min="0" max="100" step="any" inputmode="decimal" data-i18n-ph="phPct" placeholder="enter %"><span class="unit" data-i18n="uOfColl">% of collected</span></div>
           <span class="hint" data-i18n="hEc">Plastic that is collected but still escapes along the way: inadequate containment, open vehicles, overflowing collection points, waste dropped in transport, wind-blown plastics, landfill erosion.</span>
         </div>
@@ -273,17 +282,17 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
     </div></section>
 
     <section class="card"><div class="pad">
-      <div class="shead"><span class="step">D</span><h2 data-i18n="secD">Share reaching the ocean</h2><span class="chip r"><i class="dot"></i><span data-i18n="chipReview">Review</span></span></div>
+      <div class="shead"><span class="step">D</span><h2><span data-i18n="secD">Share reaching the ocean</span> <span class="qual" data-i18n="secDqual">(either directly or through other waterways)</span></h2><span class="chip r"><i class="dot"></i><span data-i18n="chipReview">Review</span></span></div>
       <p class="lede" data-i18n="secDlede">Proposed defaults from the workshop tool. Check whether they fit your city and replace where relevant.</p>
       <div class="fgroup">
         <div class="f">
           <label for="mu" data-i18n="fMu">Marine leakage, uncollected stream</label>
-          <div class="inrow review"><select id="mu"></select></div>
+          <div class="inrow review sel"><select id="mu"></select></div>
           <span class="hint" data-i18n="hMu">Select the conversion range based on climate, topography, vegetation and infrastructure that may remove mismanaged waste before it reaches waterways.</span>
         </div>
         <div class="f">
           <label for="mc" data-i18n="fMc">Marine leakage, collected stream</label>
-          <div class="inrow review"><select id="mc"></select></div>
+          <div class="inrow review sel"><select id="mc"></select></div>
           <span class="hint" data-i18n="hMc">Estimate marine leakage from collection and disposal, for example known inefficiencies or a recent material flow analysis.</span>
         </div>
       </div>
@@ -386,21 +395,21 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
    Ciudad de México and Buenos Aires are stored there as 97.03 and 96.84, which is 97.03%
    and 96.84%, so they appear here as 0.9703 and 0.9684. */
 var CITIES = [
- {n:"Barranquilla",        c:"Colombia",  pop:1377578.14195499, msw:487846.913536402, pl:61945.1995893424, cr:0.986851816524599,  g:0.01},
- {n:"Buenos Aires",        c:"Argentina", pop:2845735,          msw:1892609,          pl:242375,           cr:0.9684,             g:0.00339100654860035},
- {n:"Cartagena de Indias", c:"Colombia",  pop:1014126.28705979, msw:348589.043128583, pl:44473.9044691453, cr:0.9789176521116,    g:0.01},
- {n:"Ciudad de México",    c:"Mexico",    pop:7388200,          msw:3726229,          pl:486199,           cr:0.9703,             g:0.00826382426690595},
- {n:"Colón",               c:"Panama",    pop:260997.727419727, msw:96028.704570665,  pl:12271.3879647595, cr:0.822999422242815,  g:0},
- {n:"Kingston",            c:"Jamaica",   pop:84906.2229223808, msw:36701.4202290662, pl:4650.43627018549, cr:0.93721264469779,   g:0},
- {n:"Montevideo",          c:"Uruguay",   pop:1305767,          msw:501970,           pl:65497,            cr:1,                  g:-0.000561194093953689},
- {n:"Panamá",              c:"Panama",    pop:1171743.30364967, msw:495831.400799292, pl:63525.8522158725, cr:0.870946541046359,  g:0.0146},
- {n:"Playa del Carmen",    c:"Mexico",    pop:333800,           msw:null,             pl:null,             cr:null,               g:0.00826382426690595},
- {n:"Puerto Montt",        c:"Chile",     pop:318092,           msw:133730,           pl:17450,            cr:0.9926,             g:0.00480257021978241},
- {n:"Puerto Varas",        c:"Chile",     pop:56776,            msw:29620,            pl:3688,             cr:0.9921,             g:0.00480257021978241},
- {n:"Quito",               c:"Ecuador",   pop:2755840,          msw:1228572,          pl:156797,           cr:0.9529,             g:0.00847864596028112},
- {n:"Saint James",         c:"Jamaica",   pop:195134.713459249, msw:80393.6465822747, pl:10400.1464789524, cr:0.873211495088114,  g:0.0146},
- {n:"Santa Marta",         c:"Colombia",  pop:529327,           msw:183528,           pl:23874,            cr:0.9735,             g:0.0101451696044498},
- {n:"Tulum",               c:"Mexico",    pop:46721,            msw:null,             pl:null,             cr:null,               g:0.00826382426690595}
+ {n:"Barranquilla",        c:"Colombia",  pop:1377578.14195499, msw:487846.913536402, pl:61945.1995893424, cr:0.986851816524599,  g:0.01, eu:0.1388622784351721, ec:0.00015200769171589293},
+ {n:"Buenos Aires",        c:"Argentina", pop:2845735,          msw:1892609,          pl:242375,           cr:0.9684,             g:0.00339100654860035, eu:0.1312258124226865, ec:0.00013456128827824568},
+ {n:"Cartagena de Indias", c:"Colombia",  pop:1014126.28705979, msw:348589.043128583, pl:44473.9044691453, cr:0.9789176521116,    g:0.01, eu:0.1359594902436391, ec:0.00022645257746476593},
+ {n:"Ciudad de México",    c:"Mexico",    pop:7388200,          msw:3726229,          pl:486199,           cr:0.9703,             g:0.00826382426690595, eu:0.13491559124112357, ec:0.00015657329774157369},
+ {n:"Colón",               c:"Panama",    pop:260997.727419727, msw:96028.704570665,  pl:12271.3879647595, cr:0.822999422242815,  g:0, eu:0.1300523849692845, ec:0.022090114021384454},
+ {n:"Kingston",            c:"Jamaica",   pop:84906.2229223808, msw:36701.4202290662, pl:4650.43627018549, cr:0.93721264469779,   g:0, eu:0.12937660472724608, ec:0.00013149391119505146},
+ {n:"Montevideo",          c:"Uruguay",   pop:1305767,          msw:501970,           pl:65497,            cr:0.999,              g:-0.000561194093953689, eu:0.04382732035779274, ec:2.885326231536056e-05},
+ {n:"Panamá",              c:"Panama",    pop:1171743.30364967, msw:495831.400799292, pl:63525.8522158725, cr:0.870946541046359,  g:0.0146, eu:0.12941959575015874, ec:0.0002480538534972516},
+ {n:"Playa del Carmen / Solidaridad", c:"Mexico", pop:333800,     msw:null,             pl:null,             cr:null,               g:0.00826382426690595, eu:null, ec:null},
+ {n:"Puerto Montt",        c:"Chile",     pop:318092,           msw:133730,           pl:17450,            cr:0.9926,             g:0.00480257021978241, eu:0.14116336018618597, ec:5.783136873447027e-05},
+ {n:"Puerto Varas",        c:"Chile",     pop:56776,            msw:29620,            pl:3688,             cr:0.9921,             g:0.00480257021978241, eu:0.14037718834342894, ec:9.689137943562618e-05},
+ {n:"Quito",               c:"Ecuador",   pop:2755840,          msw:1228572,          pl:156797,           cr:0.9529,             g:0.00847864596028112, eu:0.13208901695828104, ec:0.00027182098880527977},
+ {n:"Saint James",         c:"Jamaica",   pop:195134.713459249, msw:80393.6465822747, pl:10400.1464789524, cr:0.873211495088114,  g:0.0146, eu:0.133760280394971, ec:0.0005524074229094425},
+ {n:"Santa Marta",         c:"Colombia",  pop:529327,           msw:183528,           pl:23874,            cr:0.9735,             g:0.0101451696044498, eu:0.13747131194986784, ec:0.0002238833019930293},
+ {n:"Tulum",               c:"Mexico",    pop:46721,            msw:null,             pl:null,             cr:null,               g:0.00826382426690595, eu:null, ec:null}
 ];
 
 /* country names shown in the city dropdown */
@@ -422,7 +431,7 @@ en:{
  langGroup:"Language",
  eyebrow:"GEF Circular Cities · Intercity Network",
  title:"Marine plastic baseline",
- sub:"Estimate marine plastic leakage for your city.",
+ sub:"Estimate marine plastic leakage (either directly or through other waterways) for your city.",
  secA:"Your city",
  secAlede:"Pick your city to load its baseline, or choose <em>Other city</em> to enter your own figures.",
  fCity:"City", fPop:"Population", fCityName:"City name", fCountry:"Country",
@@ -430,7 +439,7 @@ en:{
  otherCity:"Other city, enter my own figures", otherShort:"Other city", noDataTag:"(data unavailable)",
  secB:"Waste and collection", chipConfirm:"Confirm values",
  secBlede:"Prefilled from the project dataset where available. Replace them with your own figures where you have them.",
- noData:"The project dataset has no waste figures for this city, so these three are empty. Enter your own.",
+ noData:"The project dataset has no waste or leakage figures for this city, so sections B and C are empty. Enter your own.",
  prefilled:"PREFILLED",
  fMsw:"Total municipal solid waste",
  hMsw:"All waste generated in the city each year, across every material, not only plastic.",
@@ -439,14 +448,14 @@ en:{
  fShare:"Plastic share of total waste", ofTotal:"of total waste",
  fColl:"Collection rate",
  hColl:"Share of generated waste collected and delivered to a recognised recovery or disposal facility.",
- secC:"Leakage to the environment", chipFill:"Fill values",
- secClede:"These two are empty by design. Estimate them from your city's own data.",
+ secC:"Leakage to the environment",
+ secClede:"Calculated from the project dataset. Replace them with your own figures where you have them.",
  phPct:"enter %", uOfUncoll:"% of uncollected", uOfColl:"% of collected",
  fEu:"Plastic emissions from uncollected waste",
  hEu:"Plastic that is never collected and escapes into the environment: open dumping on land and into drains, waste left at unmanaged sites, material washed away by rain, plastic discarded straight into waterways. The rest is burned or buried.",
  fEc:"Plastic emissions from collected waste",
  hEc:"Plastic that is collected but still escapes along the way: inadequate containment, open vehicles, overflowing collection points, waste dropped in transport, wind-blown plastics, landfill erosion.",
- secD:"Share reaching the ocean", chipReview:"Review",
+ secD:"Share reaching the ocean", secDqual:"(either directly or through other waterways)", chipReview:"Review",
  secDlede:"Proposed defaults from the workshop tool. Check whether they fit your city and replace where relevant.",
  fMu:"Marine leakage, uncollected stream",
  muLow:"low", muMod:"moderate", muHigh:"high",
@@ -504,7 +513,7 @@ es:{
  langGroup:"Idioma",
  eyebrow:"GEF Circular Cities · Red Interurbana",
  title:"Línea base de plásticos marinos",
- sub:"Estime la fuga de plásticos marinos de su ciudad.",
+ sub:"Estime la fuga de plásticos marinos (ya sea directamente o a través de otros cursos de agua) de su ciudad.",
  secA:"Su ciudad",
  secAlede:"Elija su ciudad para cargar su línea base, o seleccione <em>Otra ciudad</em> para introducir sus propias cifras.",
  fCity:"Ciudad", fPop:"Población", fCityName:"Nombre de la ciudad", fCountry:"País",
@@ -512,7 +521,7 @@ es:{
  otherCity:"Otra ciudad, introducir mis propias cifras", otherShort:"Otra ciudad", noDataTag:"(datos no disponibles)",
  secB:"Residuos y recolección", chipConfirm:"Confirme los valores",
  secBlede:"Precargados con los datos del proyecto cuando están disponibles. Sustitúyalos por sus propias cifras cuando las tenga.",
- noData:"Los datos del proyecto no incluyen cifras de residuos para esta ciudad, por lo que estos tres campos están vacíos. Introduzca los suyos.",
+ noData:"Los datos del proyecto no incluyen cifras de residuos ni de fuga para esta ciudad, por lo que las secciones B y C están vacías. Introduzca las suyas.",
  prefilled:"PRECARGADO",
  fMsw:"Residuos sólidos urbanos totales",
  hMsw:"Todos los residuos generados en la ciudad cada año, de todos los materiales, no solo plástico.",
@@ -521,14 +530,14 @@ es:{
  fShare:"Proporción de plástico sobre el total", ofTotal:"del total de residuos",
  fColl:"Tasa de recolección",
  hColl:"Proporción de los residuos generados que se recolectan y se entregan a una instalación reconocida de recuperación o disposición final.",
- secC:"Fuga al medio ambiente", chipFill:"Complete los valores",
- secClede:"Estos dos campos están vacíos intencionadamente. Estímelos con los datos de su ciudad.",
+ secC:"Fuga al medio ambiente",
+ secClede:"Calculados con los datos del proyecto. Sustitúyalos por sus propias cifras cuando las tenga.",
  phPct:"introduzca %", uOfUncoll:"% de no recolectado", uOfColl:"% de recolectado",
  fEu:"Emisiones de plástico de residuos no recolectados",
  hEu:"Plástico que nunca se recolecta y escapa al medio ambiente: vertido a cielo abierto en el suelo y en desagües, residuos abandonados en sitios no gestionados, material arrastrado por la lluvia, plástico arrojado directamente a los cursos de agua. El resto se quema o se entierra.",
  fEc:"Emisiones de plástico de residuos recolectados",
  hEc:"Plástico que se recolecta pero aún así se escapa por el camino: contención inadecuada, vehículos abiertos, puntos de recolección desbordados, residuos caídos durante el transporte, plásticos arrastrados por el viento, erosión del vertedero.",
- secD:"Proporción que llega al océano", chipReview:"Revise",
+ secD:"Proporción que llega al océano", secDqual:"(ya sea directamente o a través de otros cursos de agua)", chipReview:"Revise",
  secDlede:"Valores propuestos por la herramienta del taller. Compruebe si se ajustan a su ciudad y sustitúyalos cuando corresponda.",
  fMu:"Fuga marina, flujo no recolectado",
  muLow:"baja", muMod:"moderada", muHigh:"alta",
@@ -672,7 +681,9 @@ function load(){
     $("pop").value = ""; $("msw").value = ""; $("plastic").value = "";
     $("coll").value = ""; $("growth").value = "";
   }
-  $("eu").value = ""; $("ec").value = "";
+  var asPct = function(v){ return v == null ? "" : +(v*100).toPrecision(6); };
+  $("eu").value = c ? asPct(c.eu) : "";
+  $("ec").value = c ? asPct(c.ec) : "";
   $("mu").value = "0.4"; $("mc").value = "0.1";
   render();
 }
@@ -726,6 +737,8 @@ function render(){
   $("pre-msw").hidden     = !c || c.msw == null;
   $("pre-plastic").hidden = !c || c.pl  == null;
   $("pre-coll").hidden    = !c || c.cr  == null;
+  $("pre-eu").hidden      = !c || c.eu  == null;
+  $("pre-ec").hidden      = !c || c.ec  == null;
 
   var missing = [];
   if(!isFinite(m.eu)) missing.push(T("todoEu"));
