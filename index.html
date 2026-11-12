@@ -125,6 +125,7 @@ h1,h2,h3,h4{font-family:var(--ff-display);margin:0;text-wrap:balance;letter-spac
 .inrow.review{background:var(--fill-review);border-color:var(--edge-review);border-left:4px solid var(--edge-review)}
 .inrow.review .unit{background:transparent;border-left-color:var(--edge-review)}
 .inrow.empty{box-shadow:inset 0 0 0 1px var(--edge-update)}
+.inrow.review.empty{box-shadow:inset 0 0 0 1px var(--edge-review)}
 select{appearance:none;cursor:pointer}
 /* a caret so the select reads as a dropdown; masked so it follows the theme colour */
 .inrow.sel{position:relative}
@@ -253,7 +254,7 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
         <div class="f">
           <label for="plastic"><span data-i18n="fPlastic">Annual plastic waste generated</span><span class="pre" id="pre-plastic" data-i18n="prefilled">PREFILLED</span></label>
           <div class="inrow update"><input id="plastic" type="number" min="0" step="any" inputmode="decimal"><span class="unit" data-i18n="uTyr">t / year</span></div>
-          <span class="hint" data-i18n="hPlastic">The plastic fraction of that total. It cannot exceed it.</span>
+          <span class="hint" data-i18n="hPlastic">The plastic fraction of total waste.</span>
         </div>
         <div class="f derived span2"><label data-i18n="fShare">Plastic share of total waste</label><span class="v num" id="o-share">&mdash;</span></div>
         <div class="f">
@@ -282,17 +283,17 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
     </div></section>
 
     <section class="card"><div class="pad">
-      <div class="shead"><span class="step">D</span><h2><span data-i18n="secD">Share reaching the ocean</span> <span class="qual" data-i18n="secDqual">(either directly or through other waterways)</span></h2><span class="chip r"><i class="dot"></i><span data-i18n="chipReview">Review</span></span></div>
-      <p class="lede" data-i18n="secDlede">Proposed defaults from the workshop tool. Check whether they fit your city and replace where relevant.</p>
+      <div class="shead"><span class="step">D</span><h2><span data-i18n="secD">Share reaching the ocean</span> <span class="qual" data-i18n="secDqual">(either directly or through other waterways)</span></h2><span class="chip r"><i class="dot"></i><span data-i18n="chipChoose">Choose values</span></span></div>
+      <p class="lede" data-i18n="secDlede">Choose the share that best fits your city.</p>
       <div class="fgroup">
         <div class="f">
           <label for="mu" data-i18n="fMu">Marine leakage, uncollected stream</label>
-          <div class="inrow review sel"><select id="mu"></select></div>
+          <div class="inrow review sel" id="w-mu"><select id="mu"></select></div>
           <span class="hint" data-i18n="hMu">Select the conversion range based on climate, topography, vegetation and infrastructure that may remove mismanaged waste before it reaches waterways.</span>
         </div>
         <div class="f">
           <label for="mc" data-i18n="fMc">Marine leakage, collected stream</label>
-          <div class="inrow review sel"><select id="mc"></select></div>
+          <div class="inrow review sel" id="w-mc"><select id="mc"></select></div>
           <span class="hint" data-i18n="hMc">Estimate marine leakage from collection and disposal, for example known inefficiencies or a recent material flow analysis.</span>
         </div>
       </div>
@@ -356,7 +357,6 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
       <div class="f span2">
         <label for="notes" data-i18n="fNotes">Which of your planned interventions do you expect to reduce marine litter, and why?</label>
         <textarea id="notes" class="notes" data-i18n-aria="fNotes" aria-label="Planned interventions expected to reduce marine litter"></textarea>
-        <span class="hint" data-i18n="hNotes">Optional. Anything else the network should know about these figures is welcome here too.</span>
       </div>
     </div>
     <details class="sumfold">
@@ -438,25 +438,25 @@ en:{
  uPeople:"people", uTyr:"t / year", uPctYr:"% / year",
  otherCity:"Other city, enter my own figures", otherShort:"Other city", noDataTag:"(data unavailable)",
  secB:"Waste and collection", chipConfirm:"Confirm values",
- secBlede:"Prefilled from the project dataset where available. Replace them with your own figures where you have them.",
- noData:"The project dataset has no waste or leakage figures for this city, so sections B and C are empty. Enter your own.",
+ secBlede:"Prefilled figures. Replace them with your own if available.",
+ noData:"No figures are available for this city, so sections B and C are empty. Enter your own.",
  prefilled:"PREFILLED",
  fMsw:"Total municipal solid waste",
  hMsw:"All waste generated in the city each year, across every material, not only plastic.",
  fPlastic:"Annual plastic waste generated",
- hPlastic:"The plastic fraction of that total. It cannot exceed it.",
+ hPlastic:"The plastic fraction of total waste.",
  fShare:"Plastic share of total waste", ofTotal:"of total waste",
  fColl:"Collection rate",
  hColl:"Share of generated waste collected and delivered to a recognised recovery or disposal facility.",
  secC:"Leakage to the environment",
- secClede:"Calculated from the project dataset. Replace them with your own figures where you have them.",
+ secClede:"Approximated figures. Replace them with your own if available.",
  phPct:"enter %", uOfUncoll:"% of uncollected", uOfColl:"% of collected",
  fEu:"Plastic emissions from uncollected waste",
  hEu:"Plastic that is never collected and escapes into the environment: open dumping on land and into drains, waste left at unmanaged sites, material washed away by rain, plastic discarded straight into waterways. The rest is burned or buried.",
  fEc:"Plastic emissions from collected waste",
  hEc:"Plastic that is collected but still escapes along the way: inadequate containment, open vehicles, overflowing collection points, waste dropped in transport, wind-blown plastics, landfill erosion.",
- secD:"Share reaching the ocean", secDqual:"(either directly or through other waterways)", chipReview:"Review",
- secDlede:"Proposed defaults from the workshop tool. Check whether they fit your city and replace where relevant.",
+ secD:"Share reaching the ocean", secDqual:"(either directly or through other waterways)", chipChoose:"Choose values", choose:"Select\u2026",
+ secDlede:"Choose the share that best fits your city.",
  fMu:"Marine leakage, uncollected stream",
  muLow:"low", muMod:"moderate", muHigh:"high",
  hMu:"Select the conversion range based on climate, topography, vegetation and infrastructure that may remove mismanaged waste before it reaches waterways.",
@@ -471,13 +471,13 @@ en:{
  resSubWait:"Complete section C to calculate the baseline.",
  tileAnnual:"Marine plastic, annual", tileAnnualSub:"tonnes per year entering the ocean",
  tileProject:"Over the project", tileProjectSub:"tonnes over {n} years at {g} growth",
- todoNeeds:"The baseline needs {items}. Enter your city's estimate in section C.",
- todoEu:"emissions from uncollected waste", todoEc:"emissions from collected waste", andWord:"and",
+ todoNeeds:"The baseline needs {items}.",
+ todoEu:"emissions from uncollected waste", todoEc:"emissions from collected waste",
+ todoMu:"marine leakage, uncollected", todoMc:"marine leakage, collected", andWord:"and",
  secSend:"Send your figures back",
  secSendLede:"Submit your baseline to the network, or copy it and send it yourself.",
  fContact:"Your name and organisation",
  fNotes:"Which of your planned interventions do you expect to reduce marine litter, and why?",
- hNotes:"Optional. Anything else the network should know about these figures is welcome here too.",
  reviewSend:"Review what will be sent", sumAria:"Results summary to copy",
  btnSubmit:"Submit to the network", btnCopy:"Copy summary", copied:"Copied", submitted:"Submitted",
  stNeedPct:"Fill in both leakage percentages before submitting.",
@@ -520,25 +520,25 @@ es:{
  uPeople:"habitantes", uTyr:"t / año", uPctYr:"% / año",
  otherCity:"Otra ciudad, introducir mis propias cifras", otherShort:"Otra ciudad", noDataTag:"(datos no disponibles)",
  secB:"Residuos y recolección", chipConfirm:"Confirme los valores",
- secBlede:"Precargados con los datos del proyecto cuando están disponibles. Sustitúyalos por sus propias cifras cuando las tenga.",
- noData:"Los datos del proyecto no incluyen cifras de residuos ni de fuga para esta ciudad, por lo que las secciones B y C están vacías. Introduzca las suyas.",
+ secBlede:"Cifras precargadas. Sustitúyalas por las suyas si dispone de ellas.",
+ noData:"No hay cifras disponibles para esta ciudad, por lo que las secciones B y C están vacías. Introduzca las suyas.",
  prefilled:"PRECARGADO",
  fMsw:"Residuos sólidos urbanos totales",
  hMsw:"Todos los residuos generados en la ciudad cada año, de todos los materiales, no solo plástico.",
  fPlastic:"Residuos plásticos generados al año",
- hPlastic:"La fracción plástica de ese total. No puede superarlo.",
+ hPlastic:"La fracción plástica del total de residuos.",
  fShare:"Proporción de plástico sobre el total", ofTotal:"del total de residuos",
  fColl:"Tasa de recolección",
  hColl:"Proporción de los residuos generados que se recolectan y se entregan a una instalación reconocida de recuperación o disposición final.",
  secC:"Fuga al medio ambiente",
- secClede:"Calculados con los datos del proyecto. Sustitúyalos por sus propias cifras cuando las tenga.",
+ secClede:"Cifras aproximadas. Sustitúyalas por las suyas si dispone de ellas.",
  phPct:"introduzca %", uOfUncoll:"% de no recolectado", uOfColl:"% de recolectado",
  fEu:"Emisiones de plástico de residuos no recolectados",
  hEu:"Plástico que nunca se recolecta y escapa al medio ambiente: vertido a cielo abierto en el suelo y en desagües, residuos abandonados en sitios no gestionados, material arrastrado por la lluvia, plástico arrojado directamente a los cursos de agua. El resto se quema o se entierra.",
  fEc:"Emisiones de plástico de residuos recolectados",
  hEc:"Plástico que se recolecta pero aún así se escapa por el camino: contención inadecuada, vehículos abiertos, puntos de recolección desbordados, residuos caídos durante el transporte, plásticos arrastrados por el viento, erosión del vertedero.",
- secD:"Proporción que llega al océano", secDqual:"(ya sea directamente o a través de otros cursos de agua)", chipReview:"Revise",
- secDlede:"Valores propuestos por la herramienta del taller. Compruebe si se ajustan a su ciudad y sustitúyalos cuando corresponda.",
+ secD:"Proporción que llega al océano", secDqual:"(ya sea directamente o a través de otros cursos de agua)", chipChoose:"Elija los valores", choose:"Seleccione\u2026",
+ secDlede:"Elija la proporción que mejor se ajuste a su ciudad.",
  fMu:"Fuga marina, flujo no recolectado",
  muLow:"baja", muMod:"moderada", muHigh:"alta",
  hMu:"Seleccione el rango de conversión según el clima, la topografía, la vegetación y la infraestructura que puedan retener los residuos mal gestionados antes de que lleguen a los cursos de agua.",
@@ -553,13 +553,13 @@ es:{
  resSubWait:"Complete la sección C para calcular la línea base.",
  tileAnnual:"Plásticos marinos, anual", tileAnnualSub:"toneladas al año que entran al océano",
  tileProject:"Durante el proyecto", tileProjectSub:"toneladas en {n} años con un crecimiento del {g}",
- todoNeeds:"La línea base necesita {items}. Introduzca la estimación de su ciudad en la sección C.",
- todoEu:"las emisiones de residuos no recolectados", todoEc:"las emisiones de residuos recolectados", andWord:"y",
+ todoNeeds:"La línea base necesita {items}.",
+ todoEu:"las emisiones de residuos no recolectados", todoEc:"las emisiones de residuos recolectados",
+ todoMu:"la fuga marina, no recolectado", todoMc:"la fuga marina, recolectado", andWord:"y",
  secSend:"Envíe sus cifras",
  secSendLede:"Envíe su línea base a la red, o cópiela y envíela usted mismo.",
  fContact:"Su nombre y organización",
  fNotes:"¿Cuáles de sus intervenciones previstas espera que reduzcan la basura marina, y por qué?",
- hNotes:"Opcional. También puede indicar aquí cualquier otra cosa que la red deba saber sobre estas cifras.",
  reviewSend:"Revisar lo que se enviará", sumAria:"Resumen de resultados para copiar",
  btnSubmit:"Enviar a la red", btnCopy:"Copiar resumen", copied:"Copiado", submitted:"Enviado",
  stNeedPct:"Complete los dos porcentajes de fuga antes de enviar.",
@@ -630,17 +630,19 @@ function buildSelects(){
     + '<option value="'+OTHER+'">' + T("otherCity") + '</option>';
   $("city").value = keep.city || "0";
 
-  $("mu").innerHTML =
-      '<option value="0.15">15% · ' + T("muLow")  + '</option>'
+  /* both start unchosen: the city has to pick a share for each stream */
+  var blank = '<option value="">' + T("choose") + '</option>';
+  $("mu").innerHTML = blank
+    + '<option value="0.15">15% · ' + T("muLow")  + '</option>'
     + '<option value="0.25">25% · ' + T("muMod")  + '</option>'
     + '<option value="0.4">40% · '  + T("muHigh") + '</option>';
-  $("mu").value = keep.mu || "0.4";
+  $("mu").value = keep.mu || "";
 
   /* collected-stream leakage: 5 to 30 in fives, the top step open-ended */
-  $("mc").innerHTML = [0.05,0.10,0.15,0.20,0.25,0.30].map(function(v){
+  $("mc").innerHTML = blank + [0.05,0.10,0.15,0.20,0.25,0.30].map(function(v){
     return '<option value="'+v+'">' + Math.round(v*100) + "%" + (v === 0.30 ? "+" : "") + '</option>';
   }).join("");
-  $("mc").value = keep.mc || "0.1";
+  $("mc").value = keep.mc || "";
 }
 
 function applyLang(){
@@ -684,7 +686,7 @@ function load(){
   var asPct = function(v){ return v == null ? "" : +(v*100).toPrecision(6); };
   $("eu").value = c ? asPct(c.eu) : "";
   $("ec").value = c ? asPct(c.ec) : "";
-  $("mu").value = "0.4"; $("mc").value = "0.1";
+  $("mu").value = ""; $("mc").value = "";
   render();
 }
 
@@ -743,12 +745,18 @@ function render(){
   var missing = [];
   if(!isFinite(m.eu)) missing.push(T("todoEu"));
   if(!isFinite(m.ec)) missing.push(T("todoEc"));
+  if(!isFinite(m.mu)) missing.push(T("todoMu"));
+  if(!isFinite(m.mc)) missing.push(T("todoMc"));
   $("w-eu").classList.toggle("empty", !isFinite(m.eu));
   $("w-ec").classList.toggle("empty", !isFinite(m.ec));
+  $("w-mu").classList.toggle("empty", !isFinite(m.mu));
+  $("w-mc").classList.toggle("empty", !isFinite(m.mc));
   if(missing.length){
+    var items = missing.map(function(s){ return "<b>" + s + "</b>"; });
+    var list = items.length === 1 ? items[0]
+      : items.slice(0,-1).join(", ") + " " + T("andWord") + " " + items[items.length-1];
     $("todo").hidden = false;
-    $("todo-txt").innerHTML = T("todoNeeds",
-      {items:"<b>" + missing.join("</b> " + T("andWord") + " <b>") + "</b>"});
+    $("todo-txt").innerHTML = T("todoNeeds", {items:list});
   } else { $("todo").hidden = true; }
 
   var ready = isFinite(m.annual);
@@ -880,11 +888,16 @@ function wireSubmit(){
 
 /* ---------- wiring ---------- */
 (function init(){
-  try{
-    var saved = localStorage.getItem("mpb-lang");
-    if(saved === "en" || saved === "es") LANG = saved;
-    else if(/^es\b/i.test(navigator.language || "")) LANG = "es";
-  }catch(e){}
+  /* ?lang=es opens straight into Spanish, so one QR code per language can work */
+  var fromUrl = (location.search.match(/[?&]lang=(en|es)\b/i) || [])[1];
+  if(fromUrl){ LANG = fromUrl.toLowerCase(); }
+  else {
+    try{
+      var saved = localStorage.getItem("mpb-lang");
+      if(saved === "en" || saved === "es") LANG = saved;
+      else if(/^es\b/i.test(navigator.language || "")) LANG = "es";
+    }catch(e){}
+  }
 
   buildSelects();
   $("city").value = "0";
