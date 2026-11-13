@@ -248,12 +248,12 @@ details.meth code{font-family:var(--ff-mono);font-size:11.5px;background:var(--s
         <p class="fixednote span2" id="nodata" data-i18n="noData" hidden>The project dataset has no waste figures for this city, so these three are empty. Enter your own.</p>
         <div class="f">
           <label for="msw"><span data-i18n="fMsw">Total municipal solid waste</span><span class="pre" id="pre-msw" data-i18n="prefilled">PREFILLED</span></label>
-          <div class="inrow update"><input id="msw" type="number" min="0" step="any" inputmode="decimal"><span class="unit" data-i18n="uTyr">t / year</span></div>
+          <div class="inrow update"><input id="msw" type="text" inputmode="numeric" autocomplete="off"><span class="unit" data-i18n="uTyr">t / year</span></div>
           <span class="hint" data-i18n="hMsw">All waste generated in the city each year, across every material, not only plastic.</span>
         </div>
         <div class="f">
           <label for="plastic"><span data-i18n="fPlastic">Annual plastic waste generated</span><span class="pre" id="pre-plastic" data-i18n="prefilled">PREFILLED</span></label>
-          <div class="inrow update"><input id="plastic" type="number" min="0" step="any" inputmode="decimal"><span class="unit" data-i18n="uTyr">t / year</span></div>
+          <div class="inrow update"><input id="plastic" type="text" inputmode="numeric" autocomplete="off"><span class="unit" data-i18n="uTyr">t / year</span></div>
           <span class="hint" data-i18n="hPlastic">Total plastic waste generated in the city per year.</span>
         </div>
         <div class="f derived span2"><label data-i18n="fShare">Plastic share of total waste</label><span class="v num" id="o-share">&mdash;</span></div>
@@ -611,15 +611,35 @@ function pct(v, d){ if(!isFinite(v)) return "—";
   return (v*100).toLocaleString(LOCALE[LANG],{minimumFractionDigits:dd, maximumFractionDigits:dd}) + "%"; }
 function num(id){ var v = parseFloat($(id).value); return isFinite(v) ? v : NaN; }
 
+/* decimals shown, and therefore used, in each typed percentage field */
+var DP = {coll:2, eu:2, ec:3};
+
+/* the tonnage fields are plain text so they can carry thousands separators,
+   which differ by language: 96,029 in English, 96.029 in Spanish */
+function parseAmount(str){
+  if(typeof str !== "string") return NaN;
+  var s = str.replace(/\s/g, "");
+  if(!s) return NaN;
+  s = (LANG === "es") ? s.replace(/\./g, "").replace(",", ".") : s.replace(/,/g, "");
+  var v = parseFloat(s);
+  return isFinite(v) ? v : NaN;
+}
+function numText(id){ return parseAmount($(id).value); }
+function fmtInt(v){ return Math.round(v).toLocaleString(LOCALE[LANG]); }
+function showAmount(id, v){ $(id).value = isFinite(v) ? fmtInt(v) : ""; }
+
 /* ---------- state ---------- */
 function current(){ var v = $("city").value; return v === OTHER ? null : CITIES[+v]; }
 function cityName(c){ return c ? c.n : ($("cityname").value.trim() || T("otherShort")); }
 
 /* the plastic fraction can never be larger than the total it comes from */
 function capPlastic(){
-  var p = parseFloat($("plastic").value), m = parseFloat($("msw").value);
-  if(isFinite(p) && isFinite(m) && p > m){ $("plastic").value = m; return true; }
-  return false;
+  var p = numText("plastic"), m = numText("msw");
+  var capped = isFinite(p) && isFinite(m) && p > m;
+  if(capped) p = m;
+  showAmount("plastic", p);
+  showAmount("msw", m);
+  return capped;
 }
 
 function buildSelects(){
@@ -664,8 +684,11 @@ function applyLang(){
 
 function setLang(l){
   if(l !== "en" && l !== "es") return;
+  /* read the tonnages under the old separators before they change meaning */
+  var msw = numText("msw"), plastic = numText("plastic");
   LANG = l;
   try{ localStorage.setItem("mpb-lang", l); }catch(e){}
+  showAmount("msw", msw); showAmount("plastic", plastic);
   applyLang();
 }
 
@@ -675,17 +698,17 @@ function load(){
   if(c){ $("cityname").value = ""; $("country").value = ""; }
   if(c){
     $("pop").value     = Math.round(c.pop);
-    $("msw").value     = c.msw == null ? "" : +c.msw.toFixed(1);
-    $("plastic").value = c.pl  == null ? "" : +c.pl.toFixed(1);
-    $("coll").value    = c.cr  == null ? "" : +(c.cr*100).toFixed(4);
+    showAmount("msw",     c.msw);
+    showAmount("plastic", c.pl);
+    $("coll").value    = c.cr  == null ? "" : +(c.cr*100).toFixed(DP.coll);
     $("growth").value  = +(c.g*100).toFixed(4);
   } else {
     $("pop").value = ""; $("msw").value = ""; $("plastic").value = "";
     $("coll").value = ""; $("growth").value = "";
   }
-  var asPct = function(v){ return v == null ? "" : +(v*100).toPrecision(6); };
-  $("eu").value = c ? asPct(c.eu) : "";
-  $("ec").value = c ? asPct(c.ec) : "";
+  var asPct = function(v, d){ return v == null ? "" : +(v*100).toFixed(d); };
+  $("eu").value = c ? asPct(c.eu, DP.eu) : "";
+  $("ec").value = c ? asPct(c.ec, DP.ec) : "";
   $("mu").value = ""; $("mc").value = "";
   render();
 }
@@ -699,8 +722,8 @@ function frac(id){
 
 function model(over){
   over = over || {};
-  var msw     = num("msw");
-  var plastic = over.plastic !== undefined ? over.plastic : num("plastic");
+  var msw     = numText("msw");
+  var plastic = over.plastic !== undefined ? over.plastic : numText("plastic");
   if(isFinite(plastic)) plastic = Math.max(0, plastic);
   /* the plastic fraction cannot exceed the total waste it is drawn from */
   if(isFinite(plastic) && isFinite(msw)) plastic = Math.min(plastic, Math.max(0, msw));
@@ -877,6 +900,14 @@ function wireSubmit(){
         submitState = "done";
         btn.textContent = T("submitted");
         setStatus(T("stOk", {city:cityName(c)}), "good");
+        /* a city may submit more than once, so free the button again shortly
+           after, keeping the confirmation on screen until something changes */
+        setTimeout(function(){
+          if(submitState !== "done") return;
+          submitState = "idle";
+          btn.disabled = false;
+          btn.textContent = T("btnSubmit");
+        }, 4000);
       })
       .catch(function(){
         submitState = "idle";
@@ -907,11 +938,14 @@ function wireSubmit(){
    "cityname","country","contact","notes"].forEach(function(id){
     $(id).addEventListener("input", render);
   });
-  /* hold the typed percentages inside 0..100 once the field is left */
+  /* once a percentage field is left, hold it inside 0..100 and to its own
+     number of decimals, so what is shown is exactly what is calculated */
   ["coll","eu","ec"].forEach(function(id){
     $(id).addEventListener("change", function(){
       var v = parseFloat(this.value);
-      if(isFinite(v) && (v > 100 || v < 0)){ this.value = Math.min(100, Math.max(0, v)); render(); }
+      if(!isFinite(v)) return;
+      var tidy = +Math.min(100, Math.max(0, v)).toFixed(DP[id]);
+      if(tidy !== v){ this.value = tidy; render(); }
     });
   });
   /* and keep plastic at or below total waste, whichever of the two was edited */
