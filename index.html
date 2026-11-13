@@ -626,7 +626,8 @@ function parseAmount(str){
 }
 function numText(id){ return parseAmount($(id).value); }
 function fmtInt(v){ return Math.round(v).toLocaleString(LOCALE[LANG]); }
-function showAmount(id, v){ $(id).value = isFinite(v) ? fmtInt(v) : ""; }
+/* null must stay blank: isFinite(null) is true in JS, which would print 0 */
+function showAmount(id, v){ $(id).value = (v == null || !isFinite(v)) ? "" : fmtInt(v); }
 
 /* ---------- state ---------- */
 function current(){ var v = $("city").value; return v === OTHER ? null : CITIES[+v]; }
